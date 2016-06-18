@@ -11,7 +11,3 @@ app.get('/auth/facebook',  passport.authenticate('facebook-token',  { session: f
     // do something with req.user
     res.send(req.user? 200 : 401);
 });
-
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
