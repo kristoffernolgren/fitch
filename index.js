@@ -1,13 +1,6 @@
 var express = require('express'),
 	app = express(),
-	passport = require('passport'),
-	local = require('passport-local').Strategy;
-
-passport.use(new local(
-  function(username, password, done) {
-      return done(null, {});
-  }
-));
+	passport = require('./passport.js').passport;
 
 app.get('/test',  passport.authenticate('local',  { session: false }), (req, res, next) => {
 	next();
