@@ -5,7 +5,9 @@ var passport = require('passport'),
 
 passport.use(new facebook(settings.facebookCredentials,
 	(accessToken, refreshToken, profile, done) => {
-		return done(null, profile);
+		User.findOrCreate({authID: profile.id}, function (error, user) {
+			return done(error, {profile: profile, user: user});
+		});
 	}
 ));
 

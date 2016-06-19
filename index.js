@@ -8,8 +8,10 @@ app.use(passport.initialize());
 app.use(express.static('public'));
 
 
-app.get('/auth/facebook',  passport.authenticate('facebook-token',  { session: false }),
+app.get('/rider/auth/facebook',  passport.authenticate('facebook-token',  { session: false }),
 	(req, res) => {
     // do something with req.user
     res.send(req.user? 200 : 401);
 });
+
+app.listen(3000);

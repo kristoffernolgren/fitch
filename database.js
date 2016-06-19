@@ -3,7 +3,7 @@ var Sequelize = require('sequelize'),
 	sequelize = new Sequelize(settings.database),
 	//Datamodel
 	User = sequelize.define('user', {
-		auth:		Sequelize.STRING,
+		authID:		Sequelize.STRING,
 		name:		Sequelize.STRING,
 	}),
 	UserAttribute = sequelize.define('userAttributes', {
