@@ -1,10 +1,7 @@
 var Sequelize = require('sequelize'),
-	sequelize = new Sequelize('database', 'username', 'password', {
-		host: 'localhost',
-		dialect: 'sqlite',
-		storage: 'db.sqlite'
-	}),
 	settings = require('./settings.js').settings,
+	sequelize = new Sequelize(settings.database),
+	//Datamodel
 	User = sequelize.define('user', {
 		auth:		Sequelize.STRING,
 		name:		Sequelize.STRING,
