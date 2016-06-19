@@ -1,36 +1,33 @@
-var Sequelize = require('sequelize');
-var sequelize = new Sequelize('database', 'username', 'password', {
-  host: 'localhost',
-  dialect: 'sqlite',
+var Sequelize = require('sequelize'),
+	sequelize = new Sequelize('database', 'username', 'password', {
+		host: 'localhost',
+		dialect: 'sqlite',
+		storage: 'db.sqlite'
+	}),
+	settings = require('./settings.js').settings,
 
-  // SQLite only
-  storage: 'db.sqlite'
-});
-
-var Driver = sequelize.define('driver', {
-	auth:		Sequelize.STRING,
-	name:		Sequelize.STRING,
-	phone:		Sequelize.INTEGER,
-	bank:		Sequelize.INTEGER,
-	idNo:		Sequelize.STRING
-});
-
-var Rider = sequelize.define('rider', {
-	auth:		Sequelize.STRING,
-	name:		Sequelize.STRING,
-	phone:		Sequelize.INTEGER,
-	payment:	Sequelize.STRING,
-});
-
-var Hail = sequelize.define('hail', {
-	lat:		Sequelize.INTEGER,
-	lon:		Sequelize.INTEGER,
-});
+	Driver = sequelize.define('driver', {
+		auth:		Sequelize.STRING,
+		name:		Sequelize.STRING,
+		phone:		Sequelize.INTEGER,
+		bank:		Sequelize.INTEGER,
+		idNo:		Sequelize.STRING
+	}),
+	Rider = sequelize.define('rider', {
+		auth:		Sequelize.STRING,
+		name:		Sequelize.STRING,
+		phone:		Sequelize.INTEGER,
+		payment:	Sequelize.STRING,
+	}),
+	Hail = sequelize.define('hail', {
+		lat:		Sequelize.INTEGER,
+		lon:		Sequelize.INTEGER,
+	});
 
 Hail.belongsTo(Driver);
 Hail.belongsTo(Rider);
 
-sequelize.sync({force: true}).then(function() {
+sequelize.sync(settings.sync).then(function() {
 	return Hail.create({
 		lat: 123,
 		lon: 1234
