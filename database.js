@@ -5,33 +5,25 @@ var Sequelize = require('sequelize'),
 		storage: 'db.sqlite'
 	}),
 	settings = require('./settings.js').settings,
-
-	Driver = sequelize.define('driver', {
+	User = sequelize.define('user', {
 		auth:		Sequelize.STRING,
 		name:		Sequelize.STRING,
-		phone:		Sequelize.INTEGER,
-		bank:		Sequelize.INTEGER,
-		idNo:		Sequelize.STRING
 	}),
-	Rider = sequelize.define('rider', {
-		auth:		Sequelize.STRING,
+	UserAttribute = sequelize.define('userAttributes', {
 		name:		Sequelize.STRING,
-		phone:		Sequelize.INTEGER,
-		payment:	Sequelize.STRING,
+		value:		Sequelize.STRING,
 	}),
 	Hail = sequelize.define('hail', {
 		lat:		Sequelize.INTEGER,
 		lon:		Sequelize.INTEGER,
 	});
 
-Hail.belongsTo(Driver);
-Hail.belongsTo(Rider);
+UserAttribute.belongsTo(User);
+Hail.belongsTo(User, {as: 'driver'});
+Hail.belongsTo(User, {as: 'rider'});
 
 sequelize.sync(settings.sync).then(function() {
-	return Hail.create({
-		lat: 123,
-		lon: 1234
-	});
+	return User.create({});
 }).then(function(driver) {
   console.log(driver.get({
     plain: true
