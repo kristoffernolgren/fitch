@@ -1,5 +1,6 @@
 var passport = require('passport'),
-	settings = require('./settings.js').settings,
+	env = process.env.NODE_ENV,
+	settings = require('./config.json')[env],
 	facebook = require('passport-facebook-token');
 
 

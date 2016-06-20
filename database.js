@@ -1,5 +1,6 @@
 var Sequelize = require('sequelize'),
-	settings = require('./settings.js').settings,
+	env = process.env.NODE_ENV,
+	settings = require('./config.json')[env],
 	sequelize = new Sequelize(settings.database),
 	//Datamodel
 	User = sequelize.define('user', {
