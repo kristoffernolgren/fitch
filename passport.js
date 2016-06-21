@@ -1,14 +1,21 @@
 var passport = require('passport'),
 	env = process.env.NODE_ENV,
 	settings = require('./config.json')[env],
-	facebook = require('passport-facebook-token');
-
+	facebook = require('passport-facebook-token'),
+	db = require('./models');
 
 passport.use(new facebook(settings.facebookCredentials,
 	(accessToken, refreshToken, profile, done) => {
-		User.findOrCreate({authID: profile.id}, function (error, user) {
-			return done(error, {profile: profile, user: user});
-		});
+		db.User
+			.find({where: {"authID": profile.id}})
+			.spread(
+				(user, created) => {
+					return done(null,
+					{
+						"profile": profile,
+						"user": user
+					});
+			});
 	}
 ));
 
