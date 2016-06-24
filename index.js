@@ -3,14 +3,9 @@ var express = require('express'),
 	passport = require('./passport.js').passport,
 	sequelize = require('./database.js').sequelize,
 	env = process.env.NODE_ENV,
-	userAttributes = require('./models/userAttributes.js'),
-	User = require('./models/user.js'),
+	models = require('./models'),
 	settings = require('./config.json')[env];
 
-User.hasMany(userAttributes);
-userAttributes.belongsTo(User);
-
-app.use(passport.initialize());
 //just for testing the api
 app.use(express.static('public'));
 
@@ -19,8 +14,11 @@ sequelize.sync(settings.sync).then(() => {
 });
 
 
+app.use(passport.initialize());
+
 app.get('/rider/create',
 	(req, res) => {
+		var User = sequelize.models.user,
 		user = User.createRider(req.query);
 		res.json(user);
 	}

@@ -19,7 +19,6 @@ User = sequelize.define('user', {},{
 				])
 				.then((attributes) => {
 					user.addUserAttributes(attributes);
-					console.log(user.getUserAttributes());
 				});
 			});
 
