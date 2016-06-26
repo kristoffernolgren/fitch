@@ -8,8 +8,14 @@ app.use(passport.initialize());
 app.get('/rider/create',
 	(req, res) => {
 		var User = sequelize.models.user;
-		User.createRider(req.query).then((response) => {
-			res.json(response);
+		User.createRider(req.query).then((user) => {
+			user.getUserAttributes().then((attributes)=> {
+				res.json({
+					user: user,
+					attributes: attributes
+				});
+
+			});
 		});
 	}
 );
