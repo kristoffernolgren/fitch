@@ -7,9 +7,10 @@ app.use(passport.initialize());
 
 app.get('/rider/create',
 	(req, res) => {
-		var User = sequelize.models.user,
-		user = User.createRider(req.query);
-		res.json(user);
+		var User = sequelize.models.user;
+		User.createRider(req.query).then((response) => {
+			res.json(response);
+		});
 	}
 );
 
