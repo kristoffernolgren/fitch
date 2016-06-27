@@ -1,6 +1,8 @@
 var sequelize = require('../database.js').sequelize,
 	Sequelize = require('../database.js').Sequelize,
 	userAttributes = sequelize.models.userAttributes,
+	Chance = require('chance'),
+    chance = new Chance();
 
 User = sequelize.define('user', {},{
 	instanceMethods: {
@@ -46,23 +48,23 @@ User = sequelize.define('user', {},{
 			return User.findByProfile(fbprofile)
 				.then((user) => {
 					//return or make+return user.
-					console.log(user);
 					return user ? user : User.register(fbprofile).then((user) => user);
 				});
 		},
 		register: (fbprofile) => {
 			var user = User.build(),
 				profile = userAttributes.build({name: 'fbprofile', value: fbprofile}),
+				pubId = userAttributes.build({name: 'pubId', value: chance.guid() }),
 				afterAllResolved = (results) =>
 				{
 					return results[0]
 						.addUserAttributes([
-							results[1]
+							results[1], results[2]
 						]);
 				};
 
 			return sequelize.Promise.all(
-					[user.save(), profile.save()]
+					[user.save(), profile.save(), pubId.save()]
 				)
 				.then(afterAllResolved);
 
