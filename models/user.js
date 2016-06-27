@@ -1,14 +1,43 @@
 var sequelize = require('../database.js').sequelize,
 	Sequelize = require('../database.js').Sequelize,
+	userAttributes = sequelize.models.userAttributes,
 
 User = sequelize.define('user', {},{
+	instanceMethods: {
+		show: function() {
+			return this.getUserAttributes()
+				.then(function(attributes) {
+					var obj = {};
+					attributes.forEach((attr) => {
+						obj[attr.name] = attr.value;
+					});
+					return obj;
+
+				});
+		}
+	},
 	classMethods: {
-		createRider: (params) => {
-			var values = [],
-				userAttributes = sequelize.models.userAttributes,
-				user = User.build(),
+		register: (fbprofile) => {
+			var user = User.build(),
+				profile = userAttributes.build({name: 'fbprofile', value: fbprofile}),
+				afterAllResolved = (results) =>
+				{
+					return results[0]
+						.addUserAttributes([
+							results[1]
+						]);
+				};
+
+			return sequelize.Promise.all(
+					[user.save(), profile.save()]
+				)
+				.then(afterAllResolved);
+
+		},
+
+		makeRider: (params) => {
+			var user = User.build(),
 				name = userAttributes.build({name: 'name', value: params.name}),
-				fbprofile = userAttributes.build({name: 'fbprofile', value: params.fbprofile}),
 				phone = userAttributes.build({name: 'phone', value: params.phone}),
 				afterAllResolved = (results) =>
 				{
@@ -22,7 +51,6 @@ User = sequelize.define('user', {},{
 
 				user = user.save();
 				name = name.save();
-				fbprofile = fbprofile.save();
 				phone = phone.save();
 
 			return sequelize.Promise.all([user, name, fbprofile, phone])
