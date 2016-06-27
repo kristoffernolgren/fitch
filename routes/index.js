@@ -7,22 +7,8 @@ var app = require('../app.js').app,
 
 app.use(passport.initialize());
 
-
-app.get('/user/create', auth,
-	(req, res) => {
-		User.register(req.query)
-			.then((user) => {
-				user.show().then((data) => {
-					res.json(data);
-				});
-			});
-	}
-);
-
 app.get('/user/me', auth,
 	(req, res) => {
-		console.log('here?');
-		console.log(req.user);
 		res.json(req.user);
 });
 
