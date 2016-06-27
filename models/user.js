@@ -33,16 +33,11 @@ User = sequelize.define('user', {},{
 	},
 	classMethods: {
 		findByProfile: (fbprofile) => {
-			return User.findOne({
-				include: [{
-					model: userAttributes,
-					where: {
-						name: 'fbprofile',
-						value: fbprofile
-					}
-				}]
+			return userAttributes.findOne({
+				where: {'name': 'fbprofile', 'value': fbprofile },
+				include: [User]
 			//return user if found
-			}).then((user) => (user === null) ? false : user );
+			}).then((userAttribute) => (userAttribute === null) ? false : userAttribute.user );
 		},
 		auth: (fbprofile) => {
 			return User.findByProfile(fbprofile)
