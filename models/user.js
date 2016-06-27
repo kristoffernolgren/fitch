@@ -14,7 +14,6 @@ User = sequelize.define('user', {},{
 						obj[attr.name] = attr.value;
 					});
 					return obj;
-
 				});
 		},
 		makeRider: function(params) {
@@ -23,7 +22,6 @@ User = sequelize.define('user', {},{
 				phone = userAttributes.build({name: 'phone', value: params.phone}),
 				afterAllResolved = (results) => this.addUserAttributes(results);
 
-				user = user.save();
 				name = name.save();
 				phone = phone.save();
 
@@ -36,27 +34,22 @@ User = sequelize.define('user', {},{
 			return userAttributes.findOne({
 				where: {'name': 'fbprofile', 'value': fbprofile },
 				include: [User]
-			//return user if found
+			//return user or false
 			}).then((userAttribute) => (userAttribute === null) ? false : userAttribute.user );
 		},
 		auth: (fbprofile) => {
 			return User.findByProfile(fbprofile)
-				.then((user) => {
-					//return or make+return user.
-					return user ? user : User.register(fbprofile).then((user) => user);
-				});
+				//return or make+return user.
+				.then((user) =>  user ? user : User.register(fbprofile).then((user) => user) );
 		},
 		register: (fbprofile) => {
 			var user = User.build(),
 				profile = userAttributes.build({name: 'fbprofile', value: fbprofile}),
 				pubId = userAttributes.build({name: 'pubId', value: chance.guid() }),
-				//relate user to attributes.
+				//relate attributes to user
 				afterAllResolved = (results) => results[0].addUserAttributes([results[1], results[2]]);
 
-
-			return sequelize.Promise.all(
-					[user.save(), profile.save(), pubId.save()]
-				)
+			return sequelize.Promise.all([user.save(), profile.save(), pubId.save()])
 				.then(afterAllResolved);
 
 		}

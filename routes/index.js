@@ -20,11 +20,3 @@ app.get('/user/makerider', auth,
 			});
 	}
 );
-
-app.get('/rider/edit',  auth, (req, res) => {
-	if(req.user.created){
-		res.json(req.user);
-	}else{
-		res.json({error: 'User already exists'});
-	}
-});
