@@ -50,13 +50,9 @@ User = sequelize.define('user', {},{
 			var user = User.build(),
 				profile = userAttributes.build({name: 'fbprofile', value: fbprofile}),
 				pubId = userAttributes.build({name: 'pubId', value: chance.guid() }),
-				afterAllResolved = (results) =>
-				{
-					return results[0]
-						.addUserAttributes([
-							results[1], results[2]
-						]);
-				};
+				//relate user to attributes.
+				afterAllResolved = (results) => results[0].addUserAttributes([results[1], results[2]]);
+
 
 			return sequelize.Promise.all(
 					[user.save(), profile.save(), pubId.save()]
