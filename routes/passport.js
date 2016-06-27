@@ -7,7 +7,7 @@ var passport = require('passport'),
 
 passport.use(new facebook(settings,
 	(accessToken, refreshToken, profile, done) => {
-		User.findOrMake(profile.id).then((user) => done(null, {
+		User.auth(profile.id).then((user) => done(null, {
 			user: user, profile: profile
 		}));
 	}

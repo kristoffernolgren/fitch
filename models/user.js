@@ -4,7 +4,7 @@ var sequelize = require('../database.js').sequelize,
 
 User = sequelize.define('user', {},{
 	instanceMethods: {
-		show: function() {
+		full: function() {
 			return this.getUserAttributes()
 				.then(function(attributes) {
 					var obj = {};
@@ -14,13 +14,23 @@ User = sequelize.define('user', {},{
 					return obj;
 
 				});
+		},
+		makeRider: function(params) {
+			var user = this,
+				name = userAttributes.build({name: 'name', value: params.name}),
+				phone = userAttributes.build({name: 'phone', value: params.phone}),
+				afterAllResolved = (results) => this.addUserAttributes(results);
+
+				user = user.save();
+				name = name.save();
+				phone = phone.save();
+
+			return sequelize.Promise.all([name, phone])
+				.then(afterAllResolved);
 		}
 	},
 	classMethods: {
-		findOrMake: (fbprofile) => {
-			var returner = (user) =>{
-				return user.show().then((user) => user);
-			};
+		findByProfile: (fbprofile) => {
 			return User.findOne({
 				include: [{
 					model: userAttributes,
@@ -29,17 +39,16 @@ User = sequelize.define('user', {},{
 						value: fbprofile
 					}
 				}]
-			}).then((user) => {
-				if(user === null){
-					return User.register(fbprofile)
-						.then((user) => {
-							return returner(user);
-						});
-				}else{
-					return returner(user);
-				}
-			});
-
+			//return user if found
+			}).then((user) => (user === null) ? false : user );
+		},
+		auth: (fbprofile) => {
+			return User.findByProfile(fbprofile)
+				.then((user) => {
+					//return or make+return user.
+					console.log(user);
+					return user ? user : User.register(fbprofile).then((user) => user);
+				});
 		},
 		register: (fbprofile) => {
 			var user = User.build(),
@@ -57,28 +66,6 @@ User = sequelize.define('user', {},{
 				)
 				.then(afterAllResolved);
 
-		},
-
-		makeRider: (params) => {
-			var user = User.build(),
-				name = userAttributes.build({name: 'name', value: params.name}),
-				phone = userAttributes.build({name: 'phone', value: params.phone}),
-				afterAllResolved = (results) =>
-				{
-					return results[0]
-						.addUserAttributes([
-							results[1],
-							results[2],
-							results[3]
-						]);
-				};
-
-				user = user.save();
-				name = name.save();
-				phone = phone.save();
-
-			return sequelize.Promise.all([user, name, fbprofile, phone])
-				.then(afterAllResolved);
 		}
 	}
 });

@@ -12,22 +12,14 @@ app.get('/user/me', auth,
 		res.json(req.user);
 });
 
-/*
-app.get('/user/makerider',
+app.get('/user/makerider', auth,
 	(req, res) => {
-		var User = sequelize.models.user;
-		User.createRider(req.query)
+		req.user.user.makeRider(req.query)
 			.then((user) => {
-				user.getUserAttributes().then((attributes)=> {
-					res.json({
-						user: user,
-						attributes: attributes
-					});
-
-				});
+				res.json(req.user);
 			});
 	}
-);*/
+);
 
 app.get('/rider/edit',  auth, (req, res) => {
 	if(req.user.created){
