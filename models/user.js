@@ -17,6 +17,30 @@ User = sequelize.define('user', {},{
 		}
 	},
 	classMethods: {
+		findOrMake: (fbprofile) => {
+			var returner = (user) =>{
+				return user.show().then((user) => user);
+			};
+			return User.findOne({
+				include: [{
+					model: userAttributes,
+					where: {
+						name: 'fbprofile',
+						value: fbprofile
+					}
+				}]
+			}).then((user) => {
+				if(user === null){
+					return User.register(fbprofile)
+						.then((user) => {
+							return returner(user);
+						});
+				}else{
+					return returner(user);
+				}
+			});
+
+		},
 		register: (fbprofile) => {
 			var user = User.build(),
 				profile = userAttributes.build({name: 'fbprofile', value: fbprofile}),
