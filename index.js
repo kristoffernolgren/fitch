@@ -4,12 +4,13 @@ var app = require('./app.js').app,
 	env = process.env.NODE_ENV,
 	models = require('./models'),
 	routes = require('./routes'),
-	settings = require('./config.json')[env].sync;
+	settings = require('./config.json')[env];
 
 
 //just for testing the api
 app.use(express.static('public'));
+app.set('json spaces', settings.indent);
 
-sequelize.sync(settings).then(() => {
+sequelize.sync(settings.sync).then(() => {
 	app.listen(3000);
 });

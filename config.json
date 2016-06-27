@@ -12,7 +12,8 @@
 			"dialect": "sqlite",
 			"storage": "db.sqlite"
 		},
-		"sync": {"force": true}
+		"sync": {"force": true},
+		"indent": 4
 	},
 	"production": {
 		"facebookCredentials": {
@@ -20,6 +21,7 @@
 			"clientSecret": "f5332ef203e5c7a46545599083d53bff"
 		},
 		"database": {},
-		"sync": {"force": false}
+		"sync": {"force": false},
+		"indent": 0
 	}
 }
