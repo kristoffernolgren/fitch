@@ -4,12 +4,33 @@ var sequelize = require('../database.js').sequelize,
 	Chance = require('chance'),
     chance = new Chance();
 
-User = sequelize.define('user', {},{
+User = sequelize.define('user', {
+		fbid: {
+			type:		Sequelize.INTEGER,
+			allowNull:	false,
+			unique: true,
+			validate: {
+				notEmpty: true
+			}
+		},
+		pubid: {
+			type:		Sequelize.STRING,
+			allowNull:	false,
+			unique: true,
+			validate: {
+				is: ["^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$", "i"],
+				notEmpty: true
+			}
+		}
+	},{
 	instanceMethods: {
 		full: function() {
+			var user = this;
 			return this.getUserAttributes()
 				.then(function(attributes) {
-					var obj = {};
+					var obj = {
+						pubid: user.pubid
+					};
 					attributes.forEach((attr) => {
 						obj[attr.name] = attr.value;
 					});
@@ -19,39 +40,20 @@ User = sequelize.define('user', {},{
 		makeRider: function(params) {
 			var user = this,
 				name = userAttributes.build({name: 'name', value: params.name}),
-				phone = userAttributes.build({name: 'phone', value: params.phone}),
-				afterAllResolved = (results) => this.addUserAttributes(results);
+				phone = userAttributes.build({name: 'phone', value: params.phone});
 
-				name = name.save();
-				phone = phone.save();
-
-			return sequelize.Promise.all([name, phone])
-				.then(afterAllResolved);
+			return sequelize.Promise.all([name.save(), phone.save()])
+				.then((results) => this.addUserAttributes(results));
 		}
 	},
 	classMethods: {
-		findByProfile: (fbprofile) => {
-			return userAttributes.findOne({
-				where: {'name': 'fbprofile', 'value': fbprofile },
-				include: [User]
-			//return user or false
-			}).then((userAttribute) => (userAttribute === null) ? false : userAttribute.user );
-		},
-		auth: (fbprofile) => {
-			return User.findByProfile(fbprofile)
-				//return or make+return user.
-				.then((user) =>  user ? user : User.register(fbprofile).then((user) => user) );
-		},
-		register: (fbprofile) => {
-			var user = User.build(),
-				profile = userAttributes.build({name: 'fbprofile', value: fbprofile}),
-				pubId = userAttributes.build({name: 'pubId', value: chance.guid() }),
-				//relate attributes to user
-				afterAllResolved = (results) => results[0].addUserAttributes([results[1], results[2]]);
-
-			return sequelize.Promise.all([user.save(), profile.save(), pubId.save()])
-				.then(afterAllResolved);
-
+		auth: (fbid) => {
+			return User.findOrCreate(
+				{
+					where: {fbid: fbid},
+					defaults: {pubid: chance.guid()}
+				})
+				.spread((user, created) => user);
 		}
 	}
 });
