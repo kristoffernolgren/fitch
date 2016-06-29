@@ -33,10 +33,10 @@ passport.use(new facebook(settings,
 			.then((user) => {
 				return user.full()
 					.then((fulluser) => {
-						return {user: user, fulluser:fulluser};
+						return {object: user, fulluser:fulluser};
 					});
 			})
-			.then((user) => done(null, {fulluser: user.fulluser, user: user.user, profile: profile}));
+			.then((user) => done(null, {fulluser: user.fulluser, object: user.object, profile: profile}));
 	}
 ));
 

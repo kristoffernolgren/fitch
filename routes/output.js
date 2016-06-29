@@ -10,6 +10,6 @@ var render = (req, res) => {
 			response.errors = req.validationErrors();
 		}
 		res.json(response);
-	}
+	};
 
 exports.render = render;
