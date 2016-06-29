@@ -22,7 +22,15 @@ app.all('/user/me', auth, render);
 
 app.get('/user/makeRider', auth,
 	(req, res, next) => {
-		req.user.user.makeRider(req.query)
-			.then(next());
+		var name, phone;
+		req.assert("name", "requierd").notEmpty();
+		req.assert("phone", "requierd").notEmpty();
+		//req.assert("phone", "must be number").isInt();
+
+		sequelize.Promise.all([
+			req.user.user.addAttribute('name',req.query.name),
+			req.user.user.addAttribute('phone', req.query.phone)
+		]).then(() => next());
+
 	},render
 );

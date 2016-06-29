@@ -37,13 +37,11 @@ User = sequelize.define('user', {
 					return obj;
 				});
 		},
-		makeRider: function(params) {
-			var user = this,
-				name = userAttributes.build({name: 'name', value: params.name}),
-				phone = userAttributes.build({name: 'phone', value: params.phone});
-
-			return sequelize.Promise.all([name.save(), phone.save()])
-				.then((results) => this.addUserAttributes(results));
+		addAttribute: function(name, value){
+			userAttributes.create({name: name, value: value})
+				.then((attr) =>{
+					this.addUserAttributes(attr);
+				});
 		}
 	},
 	classMethods: {
