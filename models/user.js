@@ -38,7 +38,7 @@ User = sequelize.define('user', {
 				});
 		},
 		addAttribute: function(name, value){
-			userAttributes.create({name: name, value: value})
+			return userAttributes.create({name: name, value: value})
 				.then((attr) =>{
 					this.addUserAttributes(attr);
 				});

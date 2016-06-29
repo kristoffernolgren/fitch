@@ -23,10 +23,3 @@ var sequelize = require('../database.js').sequelize,
 	};
 
 exports.render = render;
-/*
-.then((user) => {
-				return user.full()
-					.then((fulluser) => {
-						return {object: user, fulluser:fulluser};
-					});
-			})*/
