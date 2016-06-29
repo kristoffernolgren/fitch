@@ -9,8 +9,10 @@
   "author": "Kristoffer Nolgren",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "chance": "^1.0.3",
     "express": "^4.13.4",
+    "express-validator": "^2.20.8",
     "passport": "^0.3.2",
     "passport-facebook-token": "^3.2.0",
     "passport-local": "^1.0.0",
