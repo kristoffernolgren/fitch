@@ -1,15 +1,32 @@
-var render = (req, res) => {
-		var response = {};
+var sequelize = require('../database.js').sequelize,
+	render = (req, res) => {
+		var output = {},
+			async = [],
+			fulluser;
+
 		if(req.user){
-			response.user = req.user.fulluser;
+			fulluser = req.user.obj.full();
+			async.push(fulluser);
 		}
 		if(Object.keys(req.query).length){
-			response.params = req.query;
+			output.params = req.query;
 		}
 		if(req.validationErrors().length > 0 ){
-			response.errors = req.validationErrors();
+			output.errors = req.validationErrors();
 		}
-		res.json(response);
+		sequelize.Promise.all(async).then((response) => {
+			if(response.length > 0){
+				output.user = response[0];
+			}
+			res.json(output);
+		});
 	};
 
 exports.render = render;
+/*
+.then((user) => {
+				return user.full()
+					.then((fulluser) => {
+						return {object: user, fulluser:fulluser};
+					});
+			})*/

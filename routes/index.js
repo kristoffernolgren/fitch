@@ -27,9 +27,9 @@ app.get('/user/makeRider', auth,
 		//req.assert("phone", "must be number").isInt();
 
 		sequelize.Promise.all([
-			req.user.object.addAttribute('name',req.query.name),
-			req.user.object.addAttribute('phone', req.query.phone),
-			req.user.object.addAttribute('rider', 'true')
+			req.user.obj.addAttribute('name',req.query.name),
+			req.user.obj.addAttribute('phone', req.query.phone),
+			req.user.obj.addAttribute('rider', 'true')
 		]).then(() => next());
 
 	},render
