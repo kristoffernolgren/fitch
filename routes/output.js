@@ -3,9 +3,8 @@ var sequelize = require('../database.js').sequelize,
 		var output = {},
 			async = [],
 			detailed;
-
-		if(req.user){
-			detailed = req.user.obj.detailed();
+		if(req.user && req.user.guid){
+			detailed = req.user.detailed();
 			async.push(detailed);
 		}
 		if(Object.keys(req.query).length){

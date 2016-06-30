@@ -1,26 +1,31 @@
 var app =		require('../app.js').app,
 	auth =		require('./auth.js').auth,
+	login =		require('./auth.js').login,
 	Sequelize = require('../database.js').Sequelize,
 	sequelize = require('../database.js').sequelize,
-	validator =	require('./validator.js').validator,
+	validate =	require('./validator.js').validate,
 	render =	require('./output.js').render,
 	User =		sequelize.models.user;
 
+app.all('/user/me',(req,res,next) =>{
+		req.assert('access_token', 'required').notEmpty();
+		next();
+	}, validate, auth, render);
 
-
-
-app.all('/user/me', auth, render);
-
-app.get('/user/makeRider', auth,
+app.get('/user/makeRider',(req,res,next)=>{
+		req.assert('name', 'required').notEmpty();
+		req.assert('phone', 'required').notEmpty();
+		req.assert('access_token', 'required').notEmpty();
+		next();
+	},
+	validate, auth,
 	(req, res, next) => {
-		req.assert("name", "requierd").notEmpty();
-		req.assert("phone", "requierd").notEmpty();
 		//req.assert("phone", "must be number").isInt();
 
 		sequelize.Promise.all([
-			req.user.obj.addAttribute('name',req.query.name),
-			req.user.obj.addAttribute('phone', req.query.phone),
-			req.user.obj.addAttribute('rider', 'true')
+			req.user.addAttribute('name',req.query.name),
+			req.user.addAttribute('phone', req.query.phone),
+			req.user.addAttribute('rider', 'true')
 		]).then(() => next());
 
 	},render
