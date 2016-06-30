@@ -1,6 +1,5 @@
 var sequelize = require('../database.js').sequelize,
-	Sequelize = require('../database.js').Sequelize,
-	validator = require('validator');
+	Sequelize = require('../database.js').Sequelize;
 
 
 UserAttribute = sequelize.define('userAttributes', {

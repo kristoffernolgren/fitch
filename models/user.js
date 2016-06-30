@@ -13,7 +13,7 @@ User = sequelize.define('user', {
 				notEmpty: true
 			}
 		},
-		pubid: {
+		guid: {
 			type:		Sequelize.STRING,
 			allowNull:	false,
 			unique: true,
@@ -24,12 +24,12 @@ User = sequelize.define('user', {
 		}
 	},{
 	instanceMethods: {
-		full: function() {
+		detailed: function() {
 			var user = this;
 			return this.getUserAttributes()
 				.then(function(attributes) {
 					var obj = {
-						pubid: user.pubid
+						guid: user.guid
 					};
 					attributes.forEach((attr) => {
 						obj[attr.name] = attr.value;
@@ -49,7 +49,7 @@ User = sequelize.define('user', {
 			return User.findOrCreate(
 				{
 					where: {fbid: fbid},
-					defaults: {pubid: chance.guid()}
+					defaults: {guid: chance.guid()}
 				})
 				.spread((user, created) => user);
 		}

@@ -34,7 +34,4 @@ passport.use(new facebook(settings,
 	}
 ));
 
-
-
-
 exports.auth = auth;

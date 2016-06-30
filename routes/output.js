@@ -2,11 +2,11 @@ var sequelize = require('../database.js').sequelize,
 	render = (req, res) => {
 		var output = {},
 			async = [],
-			fulluser;
+			detailed;
 
 		if(req.user){
-			fulluser = req.user.obj.full();
-			async.push(fulluser);
+			detailed = req.user.obj.detailed();
+			async.push(detailed);
 		}
 		if(Object.keys(req.query).length){
 			output.params = req.query;

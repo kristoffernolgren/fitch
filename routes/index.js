@@ -1,5 +1,5 @@
 var app = require('../app.js').app,
-	auth = require('./passport.js').auth,
+	auth = require('./auth.js').auth,
 	Sequelize = require('../database.js').Sequelize,
 	sequelize = require('../database.js').sequelize,
 	User = sequelize.models.user,
