@@ -11,7 +11,8 @@
     console.log('statusChangeCallback');
     console.log(response);
     document.getElementById('status').innerHTML = '<a href="/user/me?access_token='+response.authResponse.accessToken+'">Auth</a>';
-    document.getElementById('status').innerHTML += '<br /><a href="/user/makerider?name=asdf&phone=1234&access_token='+response.authResponse.accessToken+'">Make rider</a>';
+    document.getElementById('status').innerHTML += '<br /><a href="/user/set?access_token='+response.authResponse.accessToken+'">set rider fail</a>'
+     document.getElementById('status').innerHTML += '<br /><a href="/user/set?name=asdf&phone=123&driverRequest=true&access_token='+response.authResponse.accessToken+'">set rider success</a>';
 
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.

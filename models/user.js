@@ -37,11 +37,25 @@ User = sequelize.define('user', {
 					return obj;
 				});
 		},
-		addAttribute: function(name, value){
-			return userAttributes.create({name: name, value: value})
-				.then((attr) =>{
-					this.addUserAttributes(attr);
-				});
+		getAttribute: function(name){
+			return this.getUserAttributes({
+				where:{
+					name: name
+				}
+			});
+		},
+		setAttribute: function(name, value){
+			return this.getAttribute(name).then((attribute) => {
+				if(attribute.length > 0){
+					return attribute[0].update({value: value});
+				}else{
+					return userAttributes.create({name: name, value: value})
+					.then((attr) =>{
+						return this.addUserAttributes(attr);
+					});
+				}
+
+			});
 		}
 	},
 	classMethods: {
@@ -55,9 +69,10 @@ User = sequelize.define('user', {
 				})
 				.spread((user, created) => {
 					if(created){
-						user.addAttribute('name', name);
+						return user.setAttribute('name', name);
+					}else{
+						return user;
 					}
-					return user;
 				});
 		}
 	}
