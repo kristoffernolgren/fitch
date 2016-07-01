@@ -1,11 +1,11 @@
-var app = require('../app.js').app,
-	passport = require('passport'),
-	env = process.env.NODE_ENV,
-	settings = require('../config.json')[env].facebookCredentials,
-	facebook = require('passport-facebook-token'),
-	User = require('../database.js').sequelize.models.user,
+var app =		require('../app.js').app,
+	passport =	require('passport'),
+	env =		process.env.NODE_ENV,
+	settings =	require('../config.json')[env].facebookCredentials,
+	facebook =	require('passport-facebook-token'),
+	User =		require('../database.js').sequelize.models.user,
 	validate =	require('./validator.js').validate,
-	auth = (req,res,next) => {
+	auth =	(req,res,next) => {
 			passport.authenticate('facebook-token', (err, user, info) => {
 			//one more time we're gonna validate
 			if(err !== null){

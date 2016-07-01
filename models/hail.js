@@ -1,6 +1,6 @@
 var sequelize = require('../database.js').sequelize,
 	Sequelize = require('../database.js').Sequelize,
-	User = require('./user.js');
+	User =		require('./user.js');
 
 Hail = sequelize.define('hail', {
 	lat:		Sequelize.INTEGER,
