@@ -8,7 +8,7 @@ var app =		require('../app.js').app,
 			passport.authenticate('facebook-token', (err, user, info) => {
 			//Validate the auth
 			if(err !== null){
-				req.assert('access_token', err.message).falsy(user);
+				req.assert('access_token', err.message).isDefined(user);
 				return validate(req,res,next);
 			}else{
 				return User.auth(user.id, user.displayName)

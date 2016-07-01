@@ -15,7 +15,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
 	validator({
 		customValidators: {
-			falsy: (value, test) => typeof test === undefined
+			//return false when validation fails
+			isDefined: (value, test) => typeof test === undefined
 		}
 	})
 );

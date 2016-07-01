@@ -10,7 +10,8 @@
 			"password": "password",
 			"host": "localhost",
 			"dialect": "sqlite",
-			"storage": "db.sqlite"
+			"storage": "db.sqlite",
+			"logging": false
 		},
 		"sync": {"force": true},
 		"indent": 4
