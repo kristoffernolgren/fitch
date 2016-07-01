@@ -12,7 +12,7 @@ var app =		require('../app.js').app,
 				return validate(req,res,next);
 			}
 
-			User.auth(user.id)
+			User.auth(user.id, user.displayName)
 				.then((user) => {
 					return req.logIn(user, { session: false }, () => next());
 				});

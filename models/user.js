@@ -45,13 +45,20 @@ User = sequelize.define('user', {
 		}
 	},
 	classMethods: {
-		auth: (fbid) => {
+		auth: (fbid, name) => {
 			return User.findOrCreate(
 				{
 					where: {fbid: fbid},
-					defaults: {guid: chance.guid()}
+					defaults: {
+						guid: chance.guid()
+					}
 				})
-				.spread((user, created) => user);
+				.spread((user, created) => {
+					if(created){
+						user.addAttribute('name', name);
+					}
+					return user;
+				});
 		}
 	}
 });

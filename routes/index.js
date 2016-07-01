@@ -13,7 +13,6 @@ app.all('/user/me',(req,res,next) =>{
 	}, validate, auth, render);
 
 app.get('/user/makeRider',(req,res,next)=>{
-		req.assert('name', 'required').notEmpty();
 		req.assert('phone', 'required').notEmpty();
 		req.assert('access_token', 'required').notEmpty();
 		next();
@@ -23,7 +22,6 @@ app.get('/user/makeRider',(req,res,next)=>{
 		//req.assert("phone", "must be number").isInt();
 
 		sequelize.Promise.all([
-			req.user.addAttribute('name',req.query.name),
 			req.user.addAttribute('phone', req.query.phone),
 			req.user.addAttribute('rider', 'true')
 		]).then(() => next());
