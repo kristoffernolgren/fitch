@@ -1,7 +1,6 @@
 var app =		require('../app.js').app,
 	passport =	require('passport'),
-	env =		process.env.NODE_ENV,
-	settings =	require('../config.json')[env].facebookCredentials,
+	settings =	require('../config.js').settings.facebookCredentials,
 	facebook =	require('passport-facebook-token'),
 	User =		require('../database.js').sequelize.models.user,
 	validate =	require('./validator.js').validate,

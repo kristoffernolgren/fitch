@@ -1,6 +1,5 @@
 var Sequelize =	require('sequelize'),
-	env =		process.env.NODE_ENV,
-	settings =	require('./config.json')[env].database;
+	settings =	require('./config.js').settings.database;
 
 module.exports = {
 	'sequelize': new Sequelize(settings),
