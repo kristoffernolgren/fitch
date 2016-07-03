@@ -6,11 +6,12 @@ var app =		require('../app.js').app,
 	validate =	require('./validator.js').validate,
 	auth =	(req,res,next) => {
 			passport.authenticate('facebook-token', (err, user, info) => {
-			//Validate the auth
+			//Error if invalid accestoken
 			if(err !== null){
 				req.assert('access_token', err.message).isDefined(user);
 				return validate(req,res,next);
 			}else{
+				//Login and create user
 				return User.auth(user.id, user.displayName)
 					.then((user) => {
 						return req.logIn(user, { session: false }, () => next());

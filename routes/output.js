@@ -1,11 +1,8 @@
 var sequelize = require('../database.js').sequelize,
 	render = (req, res) => {
-		var output = {},
-			async = [],
-			detailed;
+		var output = {};
 		if(req.user && req.user.guid){
-			detailed = req.user.detailed();
-			async.push(detailed);
+			output.user = req.user.locals;
 		}
 		if(Object.keys(req.query).length){
 			output.params = req.query;
@@ -13,12 +10,7 @@ var sequelize = require('../database.js').sequelize,
 		if(req.validationErrors().length > 0 ){
 			output.errors = req.validationErrors();
 		}
-		sequelize.Promise.all(async).then((response) => {
-			if(response.length > 0){
-				output.user = response[0];
-			}
-			res.json(output);
-		});
+		res.json(output);
 	};
 
 exports.render = render;

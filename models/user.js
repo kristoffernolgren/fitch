@@ -39,23 +39,21 @@ User = sequelize.define('user', {
 		},
 		getAttribute: function(name){
 			return this.getUserAttributes({
-				where:{
-					name: name
-				}
-			});
+					where:{
+						name: name
+					}
+				}).then((attr) => {
+					return attr[0];
+				});
 		},
 		setAttribute: function(name, value){
-			return this.getAttribute(name).then((attribute) => {
-				if(attribute.length > 0){
-					return attribute[0].update({value: value});
-				}else{
-					return userAttributes.create({name: name, value: value})
-					.then((attr) =>{
-						return this.addUserAttributes(attr);
-					});
-				}
-
-			});
+			var newAttr = {name: name, value: value};
+			if(typeof this.locals[name] === 'undefined'){
+				userAttributes.create(newAttr).then((attr) => this.addUserAttributes(attr));
+			}else{
+				this.getAttribute(name).then((attribute) => attribute.update({value: value}));
+			}
+			this.locals[name] = value;
 		}
 	},
 	classMethods: {
@@ -69,9 +67,16 @@ User = sequelize.define('user', {
 				})
 				.spread((user, created) => {
 					if(created){
-						return user.setAttribute('name', name);
-					}else{
+						user.locals = {};
+						user.setAttribute('name', name);
 						return user;
+					}else{
+						//get details from database
+						return user.detailed().
+							then((details) => {
+								user.locals = details;
+								return user;
+							});
 					}
 				});
 		}

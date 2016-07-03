@@ -19,18 +19,15 @@ app.get('/user/set',(req,res,next)=>{
 	},
 	validate, auth,
 	(req, res, next) => {
-		var attributes = ['name', 'phone', 'driverRequest'],
-			requests = [];
+		var attributes = ['name', 'phone', 'driverRequest'];
 
 		attributes.forEach((attribute) => {
+			//Only do requests on lines that have properties.
 			if(typeof req.query[attribute] !=='undefined'){
-				requests.push(
-					req.user.setAttribute(attribute, req.query[attribute])
-				);
+				req.user.setAttribute(attribute, req.query[attribute]);
 			}
 		});
-
-		sequelize.Promise.all(requests).then(() => next());
+		next();
 
 	},render
 );
