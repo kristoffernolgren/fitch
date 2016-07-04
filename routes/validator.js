@@ -21,7 +21,9 @@ app.use(
 		customValidators: {
 			//return false when validation fails
 			isDefined: (value, test) => typeof test === undefined,
-			userHas: (value, attr, user) => typeof user.locals[attr] !== 'undefined'
+			userHas: (value, attr, user) => {
+				return user.getAttribute(attr);
+			}
 		}
 	})
 );

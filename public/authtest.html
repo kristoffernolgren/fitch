@@ -13,8 +13,8 @@
     document.getElementById('status').innerHTML = '<a href="/user/me?access_token='+response.authResponse.accessToken+'">Auth</a>';
     document.getElementById('status').innerHTML += '<br /><a href="/user/set?access_token='+response.authResponse.accessToken+'">set rider fail</a>'
      document.getElementById('status').innerHTML += '<br /><a href="/user/set?name=asdf&phone=123&&access_token='+response.authResponse.accessToken+'">set rider success</a>';
-     document.getElementById('status').innerHTML += '<br /><a href="/user/set?name=asdf&phone=123&driverRequest=true&access_token='+response.authResponse.accessToken+'">set driver fail</a>';
-     document.getElementById('status').innerHTML += '<br /><a href="/user/set?&bank=asdf&bankNo=123&phone=123&driverRequest=true&access_token='+response.authResponse.accessToken+'">set driver success</a>';
+     document.getElementById('status').innerHTML += '<br /><a href="/user/set?name=asdf&phone=123&driverrequest=true&access_token='+response.authResponse.accessToken+'">set driver fail</a>';
+     document.getElementById('status').innerHTML += '<br /><a href="/user/set?&bank=asdf&bankNo=123&phone=123&driverrequest=true&access_token='+response.authResponse.accessToken+'">set driver success</a>';
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation

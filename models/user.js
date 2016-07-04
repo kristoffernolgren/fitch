@@ -24,36 +24,27 @@ User = sequelize.define('user', {
 		}
 	},{
 	instanceMethods: {
-		detailed: function() {
-			var user = this;
-			return this.getUserAttributes()
-				.then(function(attributes) {
-					var obj = {
-						guid: user.guid
-					};
-					attributes.forEach((attr) => {
-						obj[attr.name] = attr.value;
-					});
-					return obj;
-				});
-		},
 		getAttribute: function(name){
-			return this.getUserAttributes({
-					where:{
-						name: name
-					}
-				}).then((attr) => {
-					return attr[0];
-				});
+			var attr;
+			if(typeof this.userAttributes === "undefined"){return false;}
+
+			attr = this.userAttributes.find((attr)=> {
+				return attr.name === name;
+			});
+			return typeof attr === 'undefined'? false : attr;
 		},
 		setAttribute: function(name, value){
-			var newAttr = {name: name, value: value};
-			if(typeof this.locals[name] === 'undefined'){
-				userAttributes.create(newAttr).then((attr) => this.addUserAttributes(attr));
+			var newAttr = {name: name, value: value},
+			attribute = this.getAttribute(name);
+			if(attribute){
+				attribute.update({value: value});
 			}else{
-				this.getAttribute(name).then((attribute) => attribute.update({value: value}));
+				var attr = userAttributes.build(newAttr);
+				this.userAttributes.push(attr);
+				attr.save().then((attr) => this.addUserAttributes(attr));
+
 			}
-			this.locals[name] = value;
+
 		}
 	},
 	classMethods: {
@@ -63,21 +54,17 @@ User = sequelize.define('user', {
 					where: {fbid: fbid},
 					defaults: {
 						guid: chance.guid()
-					}
+					},
+					include: [
+						{model: userAttributes}
+					]
 				})
 				.spread((user, created) => {
 					if(created){
-						user.locals = {};
+						user.userAttributes = [];
 						user.setAttribute('name', name);
-						return user;
-					}else{
-						//get details from database
-						return user.detailed().
-							then((details) => {
-								user.locals = details;
-								return user;
-							});
 					}
+					return user;
 				});
 		}
 	}

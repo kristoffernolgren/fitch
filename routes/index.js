@@ -20,7 +20,7 @@ app.get('/user/set',auth,(req, res, next) => {
 				}
 			}
 		});
-		if(typeof req.query.driverRequest !== 'undefined'){
+		if(typeof req.query.driverrequest !== 'undefined'){
 			test = [
 				req.assert('phone', 'required for becomming a driver').userHas('phone',req.user),
 				req.assert('bank', 'required for becomming a driver').userHas('bank',req.user),
