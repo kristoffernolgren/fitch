@@ -9,7 +9,7 @@ var app =		require('../app.js').app,
 app.all('/user/me', auth, render);
 
 app.get('/user/set',auth,(req, res, next) => {
-		var attributes = ['name', 'phone'],
+		var attributes = ['name', 'phone', 'bank', 'bankNo'],
 			test;
 		attributes.forEach((attribute) => {
 			//Only do requests on lines that have properties.
@@ -20,6 +20,18 @@ app.get('/user/set',auth,(req, res, next) => {
 				}
 			}
 		});
+		if(typeof req.query.driverRequest !== 'undefined'){
+			test = [
+				req.assert('phone', 'required for becomming a driver').userHas('phone',req.user),
+				req.assert('bank', 'required for becomming a driver').userHas('bank',req.user),
+				req.assert('bankNo', 'required for becomming a driver').userHas('bankNo',req.user),
+			];
+			if(isValid(test)){
+				req.user.setAttribute('driverRequest', 'true');
+			}
+
+		}
+
 		next();
 
 	},render
