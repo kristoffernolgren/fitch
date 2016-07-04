@@ -1,7 +1,7 @@
 var sequelize = require('../database.js').sequelize,
 	render = (req, res) => {
 		var output = {};
-		if(req.user && req.user.guid){
+		if(req.user){
 			output.user = req.user.locals;
 		}
 		if(Object.keys(req.query).length){

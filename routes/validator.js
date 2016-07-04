@@ -1,14 +1,7 @@
 var bodyParser =	require('body-parser'),
 	app =			require('../app.js').app,
 	validator =		require('express-validator'),
-	render =		require('./output.js').render,
-	validate = (req, res, next) => {
-		if (req.validationErrors().length) {
-			return render(req, res);
-		}else{
-			next();
-		}
-	};
+	isValid = (test) => test.validationErrors.length === 0;
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -21,4 +14,4 @@ app.use(
 	})
 );
 
-exports.validate = validate;
+exports.isValid = isValid;

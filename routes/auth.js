@@ -3,13 +3,18 @@ var app =		require('../app.js').app,
 	settings =	require('../config.js').settings.facebookCredentials,
 	facebook =	require('passport-facebook-token'),
 	User =		require('../database.js').sequelize.models.user,
-	validate =	require('./validator.js').validate,
+	render =	require('./output.js').render,
+	isValid =	require('./validator.js').isValid;
 	auth =	(req,res,next) => {
-			passport.authenticate('facebook-token', (err, user, info) => {
+		var test = req.assert('access_token', 'required').notEmpty();
+		if (!isValid(test)) {
+			return render(req, res);
+		}
+		passport.authenticate('facebook-token', (err, user, info) => {
 			//Error if invalid accestoken
 			if(err !== null){
 				req.assert('access_token', err.message).isDefined(user);
-				return validate(req,res,next);
+				return render(req, res);
 			}else{
 				//Login and create user
 				return User.auth(user.id, user.displayName)
