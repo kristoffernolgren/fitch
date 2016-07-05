@@ -7,4 +7,5 @@ userAttributes.belongsTo(User);
 
 Hail.belongsTo(User, {as: 'driver'});
 Hail.belongsTo(User, {as: 'rider'});
-User.hasMany(Hail);
+User.hasMany(Hail, {foreignKey: 'driverId'});
+User.hasMany(Hail, {foreignKey: 'riderId'});

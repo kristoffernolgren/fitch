@@ -1,6 +1,9 @@
 var bodyParser =	require('body-parser'),
 	app =			require('../app.js').app,
 	validator =		require('express-validator'),
+	inside =		require('point-in-polygon'),
+	//lat, long
+	polygon = [ [ 1, 1 ], [ 1, 2 ], [ 2, 2 ], [ 2, 1 ] ],
 	isValid = (tests) => {
 		var errors = [];
 		if(!Array.isArray(tests)){
@@ -21,9 +24,8 @@ app.use(
 		customValidators: {
 			//return false when validation fails
 			isDefined: (value, test) => typeof test === undefined,
-			userHas: (value, attr, user) => {
-				return user.getAttribute(attr);
-			}
+			userHas: (value, attr, user) => user.getAttribute(attr),
+			inside: (value, lat, lon) => inside([lat, lon], polygon),
 		}
 	})
 );
