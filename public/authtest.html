@@ -16,7 +16,9 @@
       '<br /><a href="/user/set?name=asdf&phone=123&&access_token='+response.authResponse.accessToken+'">set rider success</a>'+
       '<br /><a href="/user/set?name=asdf&phone=123&driverrequest=true&access_token='+response.authResponse.accessToken+'">set driver fail</a>'+
       '<br /><a href="/user/set?&bank=asdf&bankNo=123&phone=123&driverrequest=true&access_token='+response.authResponse.accessToken+'">set driver success</a>'+
-      '<br /><a href="/hail/create?lat=12&lon=13&access_token='+response.authResponse.accessToken+'">Hail</a>'
+      '<br /><a href="/hail/create?lat=12&lon=13&access_token='+response.authResponse.accessToken+'">Hail</a>'+
+      '<br /><a href="/hail/create?lat=-500&access_token='+response.authResponse.accessToken+'">Hail Fail</a>'
+
 
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
