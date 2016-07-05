@@ -37,12 +37,12 @@ User = sequelize.define('user', {
 			var newAttr = {name: name, value: value},
 			attribute = this.getAttribute(name);
 			if(attribute){
-				attribute.update({value: value});
+				attribute.value = value;
+				attr.promise.then(() => attribute.update({value: value}));
 			}else{
-				var attr = userAttributes.build(newAttr);
+				attr = userAttributes.build(newAttr);
 				this.userAttributes.push(attr);
-				attr.save().then((attr) => this.addUserAttributes(attr));
-
+				attr.promise = attr.save().then((attr) => this.addUserAttributes(attr));
 			}
 
 		}

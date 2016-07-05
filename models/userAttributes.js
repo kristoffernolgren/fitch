@@ -7,13 +7,13 @@ UserAttribute = sequelize.define('userAttributes', {
 		type:		Sequelize.STRING,
 		allowNull:	false,
 		validate: {
-			isIn: [['phone', 'name', 'bank', 'bankNo', 'driverRequest']],
+			isIn: [['phone', 'name','driverRequest']],
 		}
 	},
 	value: {
 		type:		Sequelize.STRING,
-		allowNull:	false
-	},
+		allowNull:  false
+	}
 });
 
 
