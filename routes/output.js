@@ -1,6 +1,6 @@
 var sequelize = require('../database.js').sequelize,
 	render = (req, res) => {
-		var output = {};
+		var output = {}, hail;
 		if(req.user){
 			output.user = {
 				guid: req.user.guid
@@ -9,6 +9,14 @@ var sequelize = require('../database.js').sequelize,
 				req.user.userAttributes.forEach((attr) => {
 					output.user[attr.name] = attr.value;
 				});
+			}
+			if(typeof req.user.hails !== 'undefined'){
+				hail = req.user.hails[0];
+				output.hail = {
+					lon: hail.lon,
+					lat: hail.lat,
+					created: hail.createdAt
+				};
 			}
 
 		}

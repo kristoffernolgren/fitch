@@ -13,7 +13,7 @@ app.get('/hail/create', auth, (req, res, next) => {
 		test = [
 			req.assert('lat', 'required').notEmpty(),
 			req.assert('lon', 'required').notEmpty(),
-			req.assert('required for making a hail').userHas('phone', req.user),
+			req.assert('user phone','required for making a hail').userHas('phone', req.user),
 			req.assert('lat', 'location not allowed').inside(q.lat, q.lon),
 			req.assert('lon', 'location not allowed').inside(q.lat, q.lon)
 		];
