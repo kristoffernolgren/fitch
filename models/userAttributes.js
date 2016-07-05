@@ -6,6 +6,7 @@ UserAttribute = sequelize.define('userAttributes', {
 	name: {
 		type:		Sequelize.STRING,
 		allowNull:	false,
+		unique: 'compositeIndex',
 		validate: {
 			isIn: [['phone', 'name','driverRequest']],
 		}
@@ -13,7 +14,11 @@ UserAttribute = sequelize.define('userAttributes', {
 	value: {
 		type:		Sequelize.STRING,
 		allowNull:  false
-	}
+	},
+	userId: {
+		type: Sequelize.STRING,
+		unique: 'compositeIndex'
+	},
 });
 
 

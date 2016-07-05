@@ -54,6 +54,5 @@ app.get('/user/set',auth,(req, res, next) => {
 		}
 
 		next();
-
 	},render
 );
