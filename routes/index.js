@@ -3,13 +3,12 @@ var app =		require('../app.js').app,
 	Sequelize = require('../database.js').Sequelize,
 	sequelize = require('../database.js').sequelize,
 	render =	require('./output.js').render,
-	hails =		sequelize.models.hail,
+	hail =		sequelize.models.hail,
 	isValid =	require('./validator.js').isValid;
 
 
 app.get('/hail/create', auth, (req, res, next) => {
 	var q = req.query,
-		hail = hails.build( {lat: q.lat,lon: q.lon} ),
 		test = [
 			req.assert('lat', 'required').notEmpty(),
 			req.assert('lon', 'required').notEmpty(),
@@ -19,10 +18,7 @@ app.get('/hail/create', auth, (req, res, next) => {
 		];
 
 	if(isValid(test)){
-		//kan ev tas bort när det laddas via user
-		req.user.hails = [];
-		req.user.hails.push(hail);
-		hail.save().then((attr) => req.user.addHail(hail, {as: 'rider'}));
+		hail.make(q.lat, q.lon, req.user);
 	}
 	next();
 }, render);

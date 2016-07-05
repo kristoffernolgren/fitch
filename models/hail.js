@@ -23,8 +23,16 @@ Hail = sequelize.define('hail', {
 			max: 180
 		}
 	}
+},{
+	classMethods: {
+		make: (lat, lon, user) => {
+			var hail = Hail.build( {lat: q.lat,lon: q.lon} );
+				//kan ev tas bort när det laddas via user
+				user.hails = [];
+				user.hails.push(hail);
+				hail.save().then((attr) => user.addHail(hail, {as: 'rider'}));
+		}
+	}
 });
-Hail.belongsTo(User, {as: 'driver'});
-Hail.belongsTo(User, {as: 'rider'});
 
 module.exports = Hail;
