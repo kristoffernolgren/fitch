@@ -9,16 +9,17 @@ var app =		require('../app.js').app,
 
 app.get('/hail/create', auth, (req, res, next) => {
 	var q = req.query,
+		latlong = {lat: q.lat, lon: q.lon},
 		test = [
 			req.assert('lat', 'required').notEmpty(),
 			req.assert('lon', 'required').notEmpty(),
 			req.assert('user phone','required for making a hail').userHas('phone', req.user),
-			req.assert('lat', 'invalid location').inside(q.lat, q.lon),
-			req.assert('lon', 'invalid location').inside(q.lat, q.lon)
+			req.assert('lat', 'invalid location').inside(latlong),
+			req.assert('lon', 'invalid location').inside(latlong)
 		];
 
 	if(isValid(test)){
-		hail.make(q.lat, q.lon, req.user);
+		hail.make(latlong, req.user);
 	}
 	next();
 }, render);

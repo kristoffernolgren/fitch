@@ -25,8 +25,8 @@ Hail = sequelize.define('hail', {
 	}
 },{
 	classMethods: {
-		make: (lat, lon, user) => {
-			var hail = Hail.build( {lat: q.lat,lon: q.lon} );
+		make: (latlong, user) => {
+			var hail = Hail.build( latlong );
 				//kan ev tas bort när det laddas via user
 				user.hails = [];
 				user.hails.push(hail);

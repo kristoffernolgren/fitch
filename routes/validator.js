@@ -25,7 +25,7 @@ app.use(
 			//return false when validation fails
 			isDefined: (value, test) => typeof test === undefined,
 			userHas: (value, attr, user) => user.getAttribute(attr),
-			inside: (value, lat, lon) => inside([lat, lon], polygon),
+			inside: (value, latlong) => inside([latlong.lat, latlong.lon], polygon),
 		}
 	})
 );
