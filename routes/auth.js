@@ -4,7 +4,7 @@ var app =		require('../app.js').app,
 	facebook =	require('passport-facebook-token'),
 	User =		require('../database.js').sequelize.models.user,
 	render =	require('./output.js').render,
-	isValid =	require('./validator.js').isValid;
+	isValid =	require('./validator.js').isValid,
 	auth =	(req,res,next) => {
 		var test = req.assert('access_token', 'required').notEmpty();
 		if (!isValid(test)) {
