@@ -61,6 +61,7 @@ User = sequelize.define('user', {
 				})
 				.spread((user, created) => {
 					if(created){
+						//arrays needed before data is added.
 						user.userAttributes = [];
 						user.setAttribute('name', name);
 					}
@@ -69,7 +70,5 @@ User = sequelize.define('user', {
 		}
 	}
 });
-
-
 
 module.exports = User;
