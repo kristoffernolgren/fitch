@@ -2,7 +2,7 @@ var sequelize =			require('../database.js').sequelize,
 	Sequelize =			require('../database.js').Sequelize,
 	userAttributes =	sequelize.models.userAttributes,
 	Chance =			require('chance'),
-    chance =			new Chance();
+	chance =			new Chance();
 
 User = sequelize.define('user', {
 		fbid: {
@@ -45,6 +45,21 @@ User = sequelize.define('user', {
 				attr.promise = attr.save().then((attr) => this.addUserAttributes(attr));
 			}
 
+		},
+		setActiveHail: function(){
+			if(this.hails.length > 0){
+				var hail = this.hails[0],
+					hour = 60*60*1000,
+					created = new Date(hail.createdAt);
+
+				if(new Date() - created < hour){
+					this.hail = hail;
+					console.log(this);
+					return;
+				}
+			}
+			this.hail = false;
+			return;
 		}
 	},
 	classMethods: {
@@ -56,15 +71,29 @@ User = sequelize.define('user', {
 						guid: chance.guid()
 					},
 					include: [
-						{model: userAttributes}
+						{model: sequelize.models.userAttributes},
+						{
+							model: sequelize.models.hail,
+							foreignKey: 'riderId'
+						}
+					],
+					order: [
+						[{
+							model: sequelize.models.hail,
+							foreignKey:' riderId'
+						},
+					'createdAt', 'DESC']
 					]
+
 				})
 				.spread((user, created) => {
 					if(created){
 						//arrays needed before data is added.
 						user.userAttributes = [];
+						user.hails = [];
 						user.setAttribute('name', name);
 					}
+					user.setActiveHail();
 					return user;
 				});
 		}
