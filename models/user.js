@@ -54,7 +54,6 @@ User = sequelize.define('user', {
 
 				if(new Date() - created < hour){
 					this.hail = hail;
-					console.log(this);
 					return;
 				}
 			}

@@ -24,8 +24,12 @@ Hail = sequelize.define('hail', {
 		}
 	}
 },{
+	paranoid: true,
 	classMethods: {
 		make: (latlong, user) => {
+			if(user.hail){
+				user.hail.destroy();
+			}
 			var hail = Hail.build( latlong );
 				user.hail = hail;
 				hail.save().then((attr) => user.addHail(hail, {as: 'rider'}));

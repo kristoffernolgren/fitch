@@ -25,6 +25,11 @@ app.get('/hail/create', auth, (req, res, next) => {
 }, render);
 
 app.all('/user/me', auth, render);
+app.get('/hail/cancel', auth, (req, res, next) => {
+	req.user.hail.destroy();
+	next();
+}, render);
+
 
 app.get('/user/set',auth,(req, res, next) => {
 		var attributes = ['name', 'phone', 'bank', 'bankNo'],
