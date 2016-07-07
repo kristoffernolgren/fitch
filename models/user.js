@@ -74,14 +74,8 @@ User = sequelize.define('user', {
 						{
 							model: sequelize.models.hail,
 							foreignKey: 'riderId'
+
 						}
-					],
-					order: [
-						[{
-							model: sequelize.models.hail,
-							foreignKey:' riderId'
-						},
-					'createdAt', 'DESC']
 					]
 
 				})

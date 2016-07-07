@@ -33,6 +33,20 @@ Hail = sequelize.define('hail', {
 			var hail = Hail.build( latlong );
 				user.hail = hail;
 				hail.save().then((attr) => user.addHail(hail, {as: 'rider'}));
+		},
+		search: () => {
+			return Hail.findAll({
+				attributes: ['lat', 'lon'],
+				where: {
+					driverId: null,
+					createdAt: {
+						$gt: new Date(new Date() - 60 * 60 * 1000)
+					}
+				}
+			})
+			.then((result)=>{
+				return result;
+			});
 		}
 	}
 });

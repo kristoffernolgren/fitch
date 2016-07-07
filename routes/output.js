@@ -21,6 +21,10 @@ var sequelize = require('../database.js').sequelize,
 			}
 
 		}
+		if(typeof res.locals.result !== 'undefined'){
+			output.result = res.locals.result;
+		}
+
 		if(Object.keys(req.query).length){
 			output.params = req.query;
 		}

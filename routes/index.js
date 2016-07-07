@@ -24,12 +24,23 @@ app.get('/hail/create', auth, (req, res, next) => {
 	next();
 }, render);
 
-app.all('/user/me', auth, render);
+app.get('/hail/search', auth, (req, res, next) => {
+	//funkar den här inline? Nog ja
+	hail.search().then((hails)=>{
+		res.locals.result = hails;
+		next();
+	});
+}, render);
+
 app.get('/hail/cancel', auth, (req, res, next) => {
-	req.user.hail.destroy();
+	if(req.user.hail){
+		req.user.hail.destroy();
+		req.user.hail = false;
+	}
 	next();
 }, render);
 
+app.get('/user/me', auth, render);
 
 app.get('/user/set',auth,(req, res, next) => {
 		var attributes = ['name', 'phone', 'bank', 'bankNo'],
