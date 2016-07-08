@@ -14,7 +14,8 @@
 			"logging": false
 		},
 		"sync": {"force": false},
-		"indent": 4
+		"indent": 4,
+		"admincodes": ["catballs", "hugelaser"]
 	},
 	"production": {
 		"facebookCredentials": {

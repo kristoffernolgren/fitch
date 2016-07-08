@@ -42,29 +42,65 @@ app.get('/hail/cancel', auth, (req, res, next) => {
 app.get('/user/me', auth, render);
 
 app.get('/user/set',auth,(req, res, next) => {
-		var attributes = ['name', 'phone', 'bank', 'bankNo'],
-			test;
-		attributes.forEach((attribute) => {
-			//Only do requests on lines that have properties.
-			if(typeof req.query[attribute] !=='undefined'){
-				test = req.assert(attribute, 'required').optional().notEmpty();
-				if(isValid(test)){
-					req.user.setAttribute(attribute, req.query[attribute]);
-				}
-			}
-		});
-		if(typeof req.query.driverrequest !== 'undefined'){
-			test = [
-				req.assert('phone', 'required for becomming a driver').userHas('phone',req.user),
-				req.assert('bank', 'required for becomming a driver').userHas('bank',req.user),
-				req.assert('bankNo', 'required for becomming a driver').userHas('bankNo',req.user),
-			];
+	var attributes = ['name', 'phone', 'bank', 'bankNo'],
+		test;
+	attributes.forEach((attribute) => {
+		//Only do requests on lines that have properties.
+		if(typeof req.query[attribute] !=='undefined'){
+			test = req.assert(attribute, 'required').optional().notEmpty();
 			if(isValid(test)){
-				req.user.setAttribute('driverRequest', 'true');
+				req.user.setAttribute(attribute, req.query[attribute]);
 			}
-
 		}
+	});
+	//driverRequest has special conditions
+	if(typeof req.query.driverrequest !== 'undefined'){
+		test = [
+			req.assert('phone', 'required for becomming a driver').userHas('phone',req.user),
+			req.assert('bank', 'required for becomming a driver').userHas('bank',req.user),
+			req.assert('bankNo', 'required for becomming a driver').userHas('bankNo',req.user),
+		];
+		if(isValid(test)){
+			req.user.setAttribute('driverRequest', 'true');
+		}
+	}
+	//Approving driverRequest
+	if(typeof req.query.driver !== 'undefined'){
+		test = [
+			req.assert('code', 'required').notEmpty(),
+			req.assert('code', 'invalid').isAdmin(),
+			req.assert('guid', 'required').notEmpty(),
+			req.assert('guid', 'must be guid').isGuid(),
+		];
+	}
+
+	if(!isValid(test)){
+		next();
+	}
+
+	User.findOne({
+		where: {
+			guid: req.query.guid,
+		},
+		include: {
+			model: sequelize.models.userAttributes,
+			required: false
+		}
+	}).then((user) => {
+		test = req.assert('guid', 'User does not exist').isDefined(user);
+		if(!isValid(test)){
+			next();
+		}
+		test = req.assert('guid', 'User is already driver').userHasNot('driver', user);
+		if(!isValid(test)){
+			next();
+		}
+		user.setAttribute('driver', true);
 
 		next();
+	});
+
+
+
 	},render
 );
