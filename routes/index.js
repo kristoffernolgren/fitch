@@ -33,9 +33,8 @@ app.get('/hail/search', auth, (req, res, next) => {
 }, render);
 
 app.get('/hail/cancel', auth, (req, res, next) => {
-	if(req.user.hail){
-		req.user.hail.destroy();
-		req.user.hail = false;
+	if(req.user.hails.length > 0){
+		req.user.hails[0].destroy();
 	}
 	next();
 }, render);

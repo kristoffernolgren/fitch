@@ -13,7 +13,7 @@
 			"storage": "db.sqlite",
 			"logging": false
 		},
-		"sync": {"force": true},
+		"sync": {"force": false},
 		"indent": 4
 	},
 	"production": {

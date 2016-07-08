@@ -10,9 +10,9 @@ var sequelize = require('../database.js').sequelize,
 					output.user[attr.name] = attr.value;
 				});
 			}
+			if(req.user.hails.length > 0){
 
-			if(req.user.hail){
-				hail = req.user.hail;
+				hail = req.user.hails[0];
 				output.hail = {
 					lon: hail.lon,
 					lat: hail.lat,
@@ -21,7 +21,8 @@ var sequelize = require('../database.js').sequelize,
 			}
 
 		}
-		if(typeof res.locals.result !== 'undefined'){
+
+		if(typeof res.locals.result !== 'undefined' && res.locals.result.length > 0){
 			output.result = res.locals.result;
 		}
 

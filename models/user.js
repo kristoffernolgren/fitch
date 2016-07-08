@@ -37,28 +37,16 @@ User = sequelize.define('user', {
 			var newAttr = {name: name, value: value},
 			attribute = this.getAttribute(name);
 			if(attribute){
+				//update
 				attribute.value = value;
 				attr.promise.then(() => attribute.update({value: value}));
 			}else{
+				//create
 				attr = userAttributes.build(newAttr);
 				this.userAttributes.push(attr);
 				attr.promise = attr.save().then((attr) => this.addUserAttributes(attr));
 			}
 
-		},
-		setActiveHail: function(){
-			if(this.hails.length > 0){
-				var hail = this.hails[0],
-					hour = 60*60*1000,
-					created = new Date(hail.createdAt);
-
-				if(new Date() - created < hour){
-					this.hail = hail;
-					return;
-				}
-			}
-			this.hail = false;
-			return;
 		}
 	},
 	classMethods: {
@@ -70,11 +58,19 @@ User = sequelize.define('user', {
 						guid: chance.guid()
 					},
 					include: [
-						{model: sequelize.models.userAttributes},
+						{
+							model: sequelize.models.userAttributes,
+							required: false
+						},
 						{
 							model: sequelize.models.hail,
-							foreignKey: 'riderId'
-
+							where: {
+								driverId: null,
+								createdAt: {
+									$gt: new Date(new Date() - 60 * 60 * 1000)
+								}
+							},
+							required: false
 						}
 					]
 
@@ -86,7 +82,6 @@ User = sequelize.define('user', {
 						user.hails = [];
 						user.setAttribute('name', name);
 					}
-					user.setActiveHail();
 					return user;
 				});
 		}
