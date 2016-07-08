@@ -8,7 +8,7 @@ UserAttribute = sequelize.define('userAttributes', {
 		allowNull:	false,
 		unique: 'compositeIndex',
 		validate: {
-			isIn: [['phone', 'name','driverRequest']],
+			isIn: [['phone', 'name','driverRequest', 'bank', 'bankNo']],
 		}
 	},
 	value: {
