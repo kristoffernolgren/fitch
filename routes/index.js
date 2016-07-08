@@ -46,7 +46,7 @@ app.get('/user/set',auth,(req, res, next) => {
 		test;
 	attributes.forEach((attribute) => {
 		//Only do requests on lines that have properties.
-		if(typeof req.query[attribute] !=='undefined'){
+		if(Boolean( req.query[attribute] )){
 			test = req.assert(attribute, 'required').optional().notEmpty();
 			if(isValid(test)){
 				req.user.setAttribute(attribute, req.query[attribute]);
@@ -54,7 +54,7 @@ app.get('/user/set',auth,(req, res, next) => {
 		}
 	});
 	//driverRequest has special conditions
-	if(typeof req.query.driverrequest !== 'undefined'){
+	if(Boolean(req.query.driverrequest)){
 		test = [
 			req.assert('phone', 'required for becomming a driver').userHas('phone',req.user),
 			req.assert('bank', 'required for becomming a driver').userHas('bank',req.user),
@@ -65,7 +65,7 @@ app.get('/user/set',auth,(req, res, next) => {
 		}
 	}
 	//Approving driverRequest
-	if(typeof req.query.driver !== 'undefined'){
+	if(Boolean(req.query.driver)){
 		test = [
 			req.assert('code', 'required').notEmpty(),
 			req.assert('code', 'invalid').isAdmin(),

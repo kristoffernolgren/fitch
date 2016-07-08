@@ -26,12 +26,12 @@ User = sequelize.define('user', {
 	instanceMethods: {
 		getAttribute: function(name){
 			var attr;
-			if(typeof this.userAttributes === "undefined"){return false;}
+			if(!Boolean(this.userAttributes)){return false;}
 
 			attr = this.userAttributes.find((attr)=> {
 				return attr.name === name;
 			});
-			return typeof attr === 'undefined'? false : attr;
+			return !Boolean(attr) ? false : attr;
 		},
 		setAttribute: function(name, value){
 			var newAttr = {name: name, value: value},
@@ -39,7 +39,7 @@ User = sequelize.define('user', {
 			if(attribute){
 				//update
 				attribute.value = value;
-				if(typeof attribute.promise === 'undefined'){
+				if(!Boolean(attribute.promise)){
 					attribute.update({value: value});
 				}else{
 					attribute.promise.then(() => attribute.update({value: value}) );

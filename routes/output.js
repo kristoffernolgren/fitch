@@ -5,7 +5,7 @@ var sequelize = require('../database.js').sequelize,
 			output.user = {
 				guid: req.user.guid
 			};
-			if(typeof req.user.userAttributes !== 'undefined'){
+			if(Boolean( req.user.userAttributes )){
 				req.user.userAttributes.forEach((attr) => {
 					output.user[attr.name] = attr.value;
 				});
@@ -22,7 +22,7 @@ var sequelize = require('../database.js').sequelize,
 
 		}
 
-		if(typeof res.locals.result !== 'undefined' && res.locals.result.length > 0){
+		if(Boolean(res.locals.result) && res.locals.result.length > 0){
 			output.result = res.locals.result;
 		}
 

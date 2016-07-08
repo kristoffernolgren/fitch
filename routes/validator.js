@@ -15,7 +15,6 @@ var bodyParser =	require('body-parser'),
 		tests.forEach((test)=> {
 			errors = errors.concat(test.validationErrors);
 		});
-		console.log(errors)
 		return errors.length === 0;
 	};
 

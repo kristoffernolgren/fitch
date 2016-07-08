@@ -12,7 +12,7 @@ var app =		require('../app.js').app,
 		}
 		passport.authenticate('facebook-token', (err, user, info) => {
 			//Error if invalid accestoken
-			if(err !== null){
+			if(Boolean(err)){
 				req.assert('access_token', err.message).isDefined(user);
 				return render(req, res);
 			}else{
@@ -30,10 +30,10 @@ app.use(passport.initialize());
 
 passport.use(new facebook(settings,
 	(accessToken, refreshToken, profile, done) => {
-		if(typeof profile === 'undefined'){
-			done(null, false, {message: 'not valid'});
-		}else{
+		if(Boolean(profile)){
 			done(null, profile);
+		}else{
+			done(null, false, {message: 'not valid'});
 		}
 	}
 ));
