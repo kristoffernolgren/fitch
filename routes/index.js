@@ -60,9 +60,7 @@ app.get('/hail/cancel', auth, (req, res, next) => {
 	next();
 }, render);
 
-app.get('/user/me', auth, render);
-
-app.get('/user/set',auth,(req, res, next) => {
+app.get('/user/me/',auth,(req, res, next) => {
 	var attributes = ['name', 'phone', 'bank', 'bankNo'],
 		test;
 	attributes.forEach((attribute) => {
