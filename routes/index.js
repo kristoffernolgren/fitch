@@ -4,7 +4,28 @@ var app =		require('../app.js').app,
 	sequelize = require('../database.js').sequelize,
 	render =	require('./output.js').render,
 	hail =		sequelize.models.hail,
-	isValid =	require('./validator.js').isValid;
+	isValid =	require('./validator.js').isValid,
+	getUser = (req, res, next) => {
+		var test = [
+			req.checkParams('guid', 'required').notEmpty(),
+			req.checkParams('guid', 'must be guid').isGuid(),
+			req.assert('user', 'Must be admin').userHas('admin',req.user)
+		];
+		if(!isValid(test)){
+			return render(req, res);
+		}
+		return User.getByGuid(req.params.guid)
+			.then((user)=>{
+				test = req.checkParams('guid', 'User does not exist').isDefined(user);
+				if(isValid(test)){
+					res.locals.targetUser = user;
+					return next();
+				}else{
+					return render(req, res);
+				}
+
+			});
+	};
 
 
 app.get('/hail/create', auth, (req, res, next) => {
@@ -64,43 +85,26 @@ app.get('/user/set',auth,(req, res, next) => {
 			req.user.setAttribute('driverRequest', 'true');
 		}
 	}
+	return next();
+},render);
+
+app.get('/user/:guid',auth,getUser,(req, res, next) => {
+	var possible = "abcdefghjkmnpqrstuvwxyz";
+	text = '';
 	//Approving driverRequest
 	if(Boolean(req.query.driver)){
-		test = [
-			req.assert('code', 'required').notEmpty(),
-			req.assert('code', 'invalid').isAdmin(),
-			req.assert('guid', 'required').notEmpty(),
-			req.assert('guid', 'must be guid').isGuid(),
-		];
-	}
-
-	if(!isValid(test)){
-		next();
-	}
-
-	User.findOne({
-		where: {
-			guid: req.query.guid,
-		},
-		include: {
-			model: sequelize.models.userAttributes,
-			required: false
-		}
-	}).then((user) => {
-		test = req.assert('guid', 'User does not exist').isDefined(user);
+		test = req.checkParams('User', 'Is already driver' ).userHasNot('driver', req.user);
 		if(!isValid(test)){
-			next();
+			return next();
 		}
-		test = req.assert('guid', 'User is already driver').userHasNot('driver', user);
-		if(!isValid(test)){
-			next();
-		}
-		user.setAttribute('driver', true);
-
-		next();
-	});
 
 
 
-	},render
-);
+		for( var i=0; i < 5; i++ )
+			text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+		res.locals.targetUser.setAttribute('driver', text);
+
+		return next();
+	}
+}, render);

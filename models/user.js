@@ -39,10 +39,12 @@ User = sequelize.define('user', {
 			if(attribute){
 				//update
 				attribute.value = value;
-				if(!Boolean(attribute.promise)){
-					attribute.update({value: value});
+				if(Boolean(attribute.promise)){
+					attribute.promise.then(() => {
+						return attribute.update({value: value});
+					});
 				}else{
-					attribute.promise.then(() => attribute.update({value: value}) );
+					attribute.update({value: value});
 				}
 			}else{
 				//create
@@ -54,6 +56,17 @@ User = sequelize.define('user', {
 		}
 	},
 	classMethods: {
+		getByGuid: (guid) => {
+			return User.findOne({
+				where: {
+					guid: guid,
+				},
+				include: {
+					model: sequelize.models.userAttributes,
+					required: false
+				}
+			});
+		},
 		auth: (fbid, name) => {
 			return User.findOrCreate(
 				{
