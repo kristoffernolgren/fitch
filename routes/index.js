@@ -46,6 +46,10 @@ app.get('/hail/create', auth, (req, res, next) => {
 }, render);
 
 app.get('/hail/search', auth, (req, res, next) => {
+	test = req.checkParams('user', 'Must be driver.').userHas('driver', req.user)
+	if(!isValid(test)){
+		next();
+	}
 	//funkar den här inline? Nog ja
 	hail.search().then((hails)=>{
 		res.locals.result = hails;
