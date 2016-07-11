@@ -9,14 +9,13 @@ var app =		require('../app.js').app,
 		var test = [
 			req.checkParams('guid', 'required').notEmpty(),
 			req.checkParams('guid', 'must be guid').isGuid(),
-			req.assert('user', 'Must be admin').userHas('admin',req.user)
 		];
 		if(!isValid(test)){
 			return render(req, res);
 		}
 		return User.getByGuid(req.params.guid)
 			.then((user)=>{
-				test = req.checkParams('guid', 'User does not exist').isDefined(user);
+				test = req.checkQuery('guid', 'User does not exist').isDefined(user);
 				if(isValid(test)){
 					res.locals.targetUser = user;
 					return next();
@@ -32,11 +31,11 @@ app.get('/hail/create', auth, (req, res, next) => {
 	var q = req.query,
 		latlong = {lat: q.lat, lon: q.lon},
 		test = [
-			req.assert('lat', 'required').notEmpty(),
-			req.assert('lon', 'required').notEmpty(),
+			req.checkQuery('lat', 'required').notEmpty(),
+			req.checkQuery('lon', 'required').notEmpty(),
 			req.assert('user phone','required for making a hail').userHas('phone', req.user),
-			req.assert('lat', 'invalid location').inside(latlong),
-			req.assert('lon', 'invalid location').inside(latlong)
+			req.checkQuery('lat', 'invalid location').inside(latlong),
+			req.checkQuery('lon', 'invalid location').inside(latlong)
 		];
 
 	if(isValid(test)){
@@ -46,7 +45,7 @@ app.get('/hail/create', auth, (req, res, next) => {
 }, render);
 
 app.get('/hail/search', auth, (req, res, next) => {
-	test = req.checkParams('user', 'Must be driver.').userHas('driver', req.user)
+	test = req.assert('user', 'Must be driver.').userHas('driver', req.user);
 	if(!isValid(test)){
 		next();
 	}
@@ -91,11 +90,16 @@ app.get('/user/me/',auth,(req, res, next) => {
 },render);
 
 app.get('/user/:guid',auth,getUser,(req, res, next) => {
+	var test = req.assert('user', 'Must be admin').userHas('admin',req.user);
+	if(!isValid(test)){
+		return render(req, res);
+	}
+
 	var possible = "abcdefghjkmnpqrstuvwxyz";
 	text = '';
 	//Approving driverRequest
 	if(Boolean(req.query.driver)){
-		test = req.checkParams('User', 'Is already driver' ).userHasNot('driver', req.user);
+		test = req.assert('User', 'Is already driver' ).userHasNot('driver', req.user);
 		if(!isValid(test)){
 			return next();
 		}
