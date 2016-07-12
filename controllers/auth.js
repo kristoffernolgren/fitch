@@ -3,7 +3,7 @@ var app =		require('../app.js').app,
 	settings =	require('../config.js').settings.facebookCredentials,
 	facebook =	require('passport-facebook-token'),
 	User =		require('../database.js').sequelize.models.user,
-	render =	require('./output.js').render,
+	render =	require('../routes/output.js').render,
 	isValid =	require('./validator.js').isValid,
 	auth =	(req,res,next) => {
 		var test = req.checkQuery('access_token', 'required').notEmpty();

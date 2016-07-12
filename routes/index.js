@@ -1,89 +1,16 @@
 var app =		require('../app.js').app,
-	auth =		require('./auth.js').auth,
-	Sequelize = require('../database.js').Sequelize,
+	c =			app.controllers,
+	auth =		app.controllers.auth,
+	targetUser = app.controllers.targetUser,
 	sequelize = require('../database.js').sequelize,
 	render =	require('./output.js').render,
 	hail =		sequelize.models.hail,
-	isValid =	require('./validator.js').isValid,
-	getUser = (req, res, next) => {
-		//sometimes it's a param
-		if(Boolean(req.params.id)){
-			req.query.id = req.params.id;
-		}
+	isValid =	require('./validator.js').isValid;
 
-		var test = [
-			req.checkQuery('id', 'required').notEmpty(),
-			req.checkQuery('id', 'Must only contain letters').isAlpha(),
-		];
-		if(!isValid(test)){
-			return render(req, res);
-		}
-
-		return User.getById(req.query.id)
-			.then((user)=>{
-				test = req.checkQuery('id', 'User does not exist').isDefined(user);
-				if(isValid(test)){
-					res.locals.targetUser = user;
-					return next();
-				}else{
-					return render(req, res);
-				}
-
-			});
-	};
-
-
-app.get('/hail/create', auth, (req, res, next) => {
-	var q = req.query,
-		latlong = {lat: q.lat, lon: q.lon},
-		test = [
-			req.checkQuery('lat', 'required').notEmpty(),
-			req.checkQuery('lon', 'required').notEmpty(),
-			req.assert('user phone','required for making a hail').userHas('phone', req.user),
-			req.checkQuery('lat', 'invalid location').inside(latlong),
-			req.checkQuery('lon', 'invalid location').inside(latlong)
-		];
-
-	if(isValid(test)){
-		hail.make(latlong, req.user);
-	}
-	next();
-}, render);
-
-app.get('/hail/search', auth, (req, res, next) => {
-	test = req.assert('user', 'Must be driver.').userHas('driver', req.user);
-	if(!isValid(test)){
-		return next();
-	}
-	hail.search().then((hails)=>{
-		res.locals.result = hails;
-		next();
-	});
-}, render);
-
-app.get('/hail/complete',auth, getUser, (req,res,next) => {
-	console.log(res.locals.targetUser.getAttribute('driver'));
-	var hail = req.user.hails[0],
-		test = [
-			req.assert('hail','user has no current hail').isDefined(hail),
-			req.assert('user', 'No such driver exists').isDefined(res.locals.targetUser.getAttribute('driver'))
-		];
-
-	if(!isValid(test)){
-		return next();
-	}
-	hail.driverId = res.locals.targetUser.id;
-	hail.save().then(()=> hail.destroy());
-
-	next();
-}, render);
-
-app.get('/hail/cancel', auth, (req, res, next) => {
-	if(req.user.hails.length > 0){
-		req.user.hails[0].destroy();
-	}
-	next();
-}, render);
+app.get('/hail/create',		c.auth,					c.hail.create,		render);
+app.get('/hail/search',		c.auth,					c.hail.search,		render);
+app.get('/hail/complete',	c.auth, c.targetUser,	c.hail.complete,	render);
+app.get('/hail/cancel',		c.auth,					c.hail.cancel,	render);
 
 app.get('/user/me',auth,(req, res, next) => {
 	var attributes = ['name', 'phone', 'bank', 'bankNo'],
@@ -111,7 +38,7 @@ app.get('/user/me',auth,(req, res, next) => {
 	return next();
 },render);
 
-app.get('/user/:id',auth,getUser,(req, res, next) => {
+app.get('/user/:id',auth,targetUser,(req, res, next) => {
 	var test;
 	if(Boolean(req.query.driver)){
 		test = [
