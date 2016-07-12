@@ -32,7 +32,7 @@ Hail = sequelize.define('hail', {
 			}
 			var hail = Hail.build( latlong );
 				user.hails[0] = hail;
-				hail.save().then((attr) => user.addHail(hail, {as: 'rider'}));
+				hail.save().then((attr) => user.addHail(hail));
 		},
 		search: () => {
 			return Hail.findAll({

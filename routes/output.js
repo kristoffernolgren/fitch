@@ -3,7 +3,7 @@ var sequelize = require('../database.js').sequelize,
 		var output = {}, hail;
 		if(req.user){
 			output.user = {
-				guid: req.user.guid
+				id: req.user.getId()
 			};
 			if(Boolean( req.user.userAttributes )){
 				req.user.userAttributes.forEach((attr) => {

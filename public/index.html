@@ -19,9 +19,10 @@
       '<br /><br /><a href="/hail/create?lat=1.5&lon=1.5&access_token='+response.authResponse.accessToken+'">Hail</a>'+
       '<br /><a href="/hail/create?lat=-500&access_token='+response.authResponse.accessToken+'">Hail Fail</a>'+
       '<br /><a href="/hail/cancel?access_token='+response.authResponse.accessToken+'">Hail cancel</a>'+
-      '<br /><br /><a href="/hail/search?access_token='+response.authResponse.accessToken+'">Sök</a>'+
-      '<br /><br /><a href="/user/e7c4481a-a4f4-509e-b063-bd58bb39cba2/?driver=true&access_token='+response.authResponse.accessToken+'">Make driver</a>'
+      '<br /><a href="/hail/complete?id=xk&access_token='+response.authResponse.accessToken+'">Complete drive</a>'+
 
+      '<br /><br /><a href="/hail/search?access_token='+response.authResponse.accessToken+'">Sök</a>'+
+      '<br /><br /><a href="/user/xk/?driver=true&access_token='+response.authResponse.accessToken+'">Make user id 1 driver</a>';
     // The response object is returned with a status field that lets the
     // app know the current login status of the person.
     // Full docs on the response object can be found in the documentation

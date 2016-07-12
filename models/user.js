@@ -1,6 +1,38 @@
 var sequelize =			require('../database.js').sequelize,
 	Sequelize =			require('../database.js').Sequelize,
 	userAttributes =	sequelize.models.userAttributes,
+	convertId = (function() {
+		var offset = 30,
+			charmap = "skajweuhxpcqdvzmngtbfyr".split(""),
+			base = charmap.length;
+		return {
+		toString: (i) => {
+			i += offset;
+			var result = "";
+			do {
+				result += charmap[i % base];
+				i = (i - i % base) / base;
+			} while (i > 0);
+
+			return result;
+		},
+		fromString: (s) => {
+			var result = 0,
+				power = 1;
+
+			s = s.toLowerCase();
+
+			for (var i = 0; i < s.length; ++i) {
+				var k = charmap.indexOf(s[i]);
+				result += power * k;
+				power *= base;
+			}
+			result -= offset;
+
+			return result;
+		}
+		};
+	}());
 
 User = sequelize.define('user', {
 		fbid: {
@@ -10,18 +42,12 @@ User = sequelize.define('user', {
 			validate: {
 				notEmpty: true
 			}
-		},
-		guid: {
-			type:		Sequelize.STRING,
-			allowNull:	false,
-			unique: true,
-			validate: {
-				is: ["^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$", "i"],
-				notEmpty: true
-			}
 		}
 	},{
 	instanceMethods: {
+		getId : function(){
+			return convertId.toString(this.id);
+		},
 		getAttribute: function(name){
 			var attr;
 			if(!Boolean(this.userAttributes)){return false;}
@@ -54,10 +80,11 @@ User = sequelize.define('user', {
 		}
 	},
 	classMethods: {
-		getByGuid: (guid) => {
+		getById: (id) => {
+			id = convertId.fromString(id);
 			return User.findOne({
 				where: {
-					guid: guid,
+					id: id,
 				},
 				include: {
 					model: sequelize.models.userAttributes,
@@ -69,9 +96,6 @@ User = sequelize.define('user', {
 			return User.findOrCreate(
 				{
 					where: {fbid: fbid},
-					defaults: {
-						guid: chance.guid()
-					},
 					include: [
 						{
 							model: sequelize.models.userAttributes,

@@ -6,16 +6,22 @@ var app =		require('../app.js').app,
 	hail =		sequelize.models.hail,
 	isValid =	require('./validator.js').isValid,
 	getUser = (req, res, next) => {
+		//sometimes it's a param
+		if(Boolean(req.params.id)){
+			req.query.id = req.params.id;
+		}
+
 		var test = [
-			req.checkParams('guid', 'required').notEmpty(),
-			req.checkParams('guid', 'must be guid').isGuid(),
+			req.checkQuery('id', 'required').notEmpty(),
+			req.checkQuery('id', 'Must only contain letters').isAlpha(),
 		];
 		if(!isValid(test)){
 			return render(req, res);
 		}
-		return User.getByGuid(req.params.guid)
+
+		return User.getById(req.query.id)
 			.then((user)=>{
-				test = req.checkQuery('guid', 'User does not exist').isDefined(user);
+				test = req.checkQuery('id', 'User does not exist').isDefined(user);
 				if(isValid(test)){
 					res.locals.targetUser = user;
 					return next();
@@ -47,13 +53,29 @@ app.get('/hail/create', auth, (req, res, next) => {
 app.get('/hail/search', auth, (req, res, next) => {
 	test = req.assert('user', 'Must be driver.').userHas('driver', req.user);
 	if(!isValid(test)){
-		next();
+		return next();
 	}
-	//funkar den här inline? Nog ja
 	hail.search().then((hails)=>{
 		res.locals.result = hails;
 		next();
 	});
+}, render);
+
+app.get('/hail/complete',auth, getUser, (req,res,next) => {
+	console.log(res.locals.targetUser.getAttribute('driver'));
+	var hail = req.user.hails[0],
+		test = [
+			req.assert('hail','user has no current hail').isDefined(hail),
+			req.assert('user', 'No such driver exists').isDefined(res.locals.targetUser.getAttribute('driver'))
+		];
+
+	if(!isValid(test)){
+		return next();
+	}
+	hail.driverId = res.locals.targetUser.id;
+	hail.save().then(()=> hail.destroy());
+
+	next();
 }, render);
 
 app.get('/hail/cancel', auth, (req, res, next) => {
@@ -63,7 +85,7 @@ app.get('/hail/cancel', auth, (req, res, next) => {
 	next();
 }, render);
 
-app.get('/user/me/',auth,(req, res, next) => {
+app.get('/user/me',auth,(req, res, next) => {
 	var attributes = ['name', 'phone', 'bank', 'bankNo'],
 		test;
 	attributes.forEach((attribute) => {
@@ -89,27 +111,18 @@ app.get('/user/me/',auth,(req, res, next) => {
 	return next();
 },render);
 
-app.get('/user/:guid',auth,getUser,(req, res, next) => {
-	var test = req.assert('user', 'Must be admin').userHas('admin',req.user);
-	if(!isValid(test)){
-		return render(req, res);
-	}
-
-	var possible = "abcdefghjkmnpqrstuvwxyz";
-	text = '';
-	//Approving driverRequest
+app.get('/user/:id',auth,getUser,(req, res, next) => {
+	var test;
 	if(Boolean(req.query.driver)){
-		test = req.assert('User', 'Is already driver' ).userHasNot('driver', req.user);
+		test = [
+			req.assert('user', 'Must be admin').userHas('admin',req.user),
+			req.assert('User', 'Is already driver' ).userHasNot('driver', req.user)
+		];
 		if(!isValid(test)){
 			return next();
 		}
 
-
-
-		for( var i=0; i < 5; i++ )
-			text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-		res.locals.targetUser.setAttribute('driver', text);
+		res.locals.targetUser.setAttribute('driver', true);
 
 		return next();
 	}
