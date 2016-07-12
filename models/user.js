@@ -1,8 +1,6 @@
 var sequelize =			require('../database.js').sequelize,
 	Sequelize =			require('../database.js').Sequelize,
 	userAttributes =	sequelize.models.userAttributes,
-	Chance =			require('chance'),
-	chance =			new Chance();
 
 User = sequelize.define('user', {
 		fbid: {
