@@ -25,8 +25,8 @@ var key =		require('../config.js').settings.stripe,
 			stripe.customers.create(createObj).then((customer)=> {
 				req.user.setAttribute('stripeId', customer.id);
 			});
-			next();
 		}
+		next();
 	},
 	charge = (req, res, next) => {
 		stripe.charges.create({

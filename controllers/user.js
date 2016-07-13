@@ -1,7 +1,7 @@
 var	isValid =	require('./validator.js').isValid,
 	edit = (req, res, next) => {
 		var attributes = ['name', 'phone', 'bank', 'bankNo'],
-			q = req.query,
+			q = req.body,
 			test;
 
 		//updated userdetails
@@ -32,7 +32,7 @@ var	isValid =	require('./validator.js').isValid,
 
 
 	admin =	(req, res, next) => {
-		var q = req.query;
+		var q = req.body;
 		if(Boolean(q.driver)){
 			var test = [
 				req.assert('user', 'Must be admin').userHas('admin',req.user),

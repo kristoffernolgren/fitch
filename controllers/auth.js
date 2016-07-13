@@ -6,14 +6,14 @@ var app =		require('../app.js').app,
 	render =	require('../routes/output.js').render,
 	isValid =	require('./validator.js').isValid,
 	auth =	(req,res,next) => {
-		var test = req.checkQuery('access_token', 'required').notEmpty();
+		var test = req.checkBody('access_token', 'required').notEmpty();
 		if (!isValid(test)) {
 			return render(req, res);
 		}
 		passport.authenticate('facebook-token', (err, user, info) => {
 			//Error if invalid accestoken
 			if(Boolean(err)){
-				req.checkQuery('access_token', err.message).isDefined(user);
+				req.assert('access_token', err.message).isDefined(user);
 				return render(req, res);
 			}else{
 				//Login and create user
@@ -30,6 +30,7 @@ app.use(passport.initialize());
 
 passport.use(new facebook(settings,
 	(accessToken, refreshToken, profile, done) => {
+
 		if(Boolean(profile)){
 			done(null, profile);
 		}else{
