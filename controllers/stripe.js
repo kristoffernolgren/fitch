@@ -27,6 +27,15 @@ var key =		require('../config.js').settings.stripe,
 			});
 			next();
 		}
+	},
+	charge = (req, res, next) => {
+		stripe.charges.create({
+			amount: 2000,
+			currency: "sek",
+			customer: req.user.getAttribute('stripeId').dataValues.value,
+		});
+		next();
 	};
 
 exports.make = make;
+exports.charge = charge;
