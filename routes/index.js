@@ -7,5 +7,5 @@ app.get('/hail/search',		c.auth,					c.hail.search,		render);
 app.get('/hail/complete',	c.auth, c.targetUser,	c.hail.complete,	render);
 app.get('/hail/cancel',		c.auth,					c.hail.cancel,		render);
 
-app.get('/user/me',			c.auth,					c.user.edit,		render);
+app.all('/user/me',			c.auth,	c.striper.make,	c.user.edit,		render);
 app.get('/user/:id',		c.auth, c.targetUser,	c.user.admin,		render);

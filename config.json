@@ -14,7 +14,8 @@
 			"logging": false
 		},
 		"sync": {"force": false},
-		"indent": 4
+		"indent": 4,
+		"stripe": "sk_test_gTa8SpQ5F6fOLu43i0HpJsQ6"
 	},
 	"production": {
 		"facebookCredentials": {
@@ -23,6 +24,7 @@
 		},
 		"database": {},
 		"sync": {"force": false},
-		"indent": 0
+		"indent": 0,
+		"stripe": "sk_live_RpjvwDEKsVVblRXVTl5pWNw9"
 	}
 }

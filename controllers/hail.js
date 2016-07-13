@@ -8,6 +8,7 @@ var isValid =	require('./validator.js').isValid,
 				req.checkQuery('lat', 'required').notEmpty(),
 				req.checkQuery('lon', 'required').notEmpty(),
 				req.assert('user phone','required for making a hail').userHas('phone', req.user),
+				req.assert('user creditCard','required for making a hail').userHas('stripeId', req.user),
 				req.checkQuery('lat', 'invalid location').inside(latlong),
 				req.checkQuery('lon', 'invalid location').inside(latlong)
 			];
