@@ -3,7 +3,7 @@ var app =		require('../app.js').app,
 	render =	require('./output.js').render;
 
 app.post('/user/me',		c.auth,	c.striper.make,		c.user.edit,		render);
-app.get('/user/:id',		c.auth, c.targetUser,		c.user.admin,		render);
+app.post('/user/:id',		c.auth, c.targetUser,		c.user.admin,		render);
 
 app.post('/hail/create',		c.auth,	c.hail.create,		render);
 app.post('/hail/search',		c.auth,	c.hail.search,		render);

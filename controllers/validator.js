@@ -2,6 +2,7 @@ var bodyParser =	require('body-parser'),
 	app =			require('../app.js').app,
 	validator =		require('express-validator'),
 	inside =		require('point-in-polygon'),
+	secret =		require('../config.js').settings.secret,
 	//lat, long
 	polygon = [ [ 1, 1 ], [ 1, 2 ], [ 2, 2 ], [ 2, 1 ] ],
 	isValid = (tests) => {
@@ -28,6 +29,7 @@ app.use(
 			userHas: (value, attr, user) => user.getAttribute(attr),
 			userHasNot: (value, attr, user) => !user.getAttribute(attr),
 			inside: (value, latlong) => inside([latlong.lat, latlong.lon], polygon),
+			isSecret: (value) => value === secret,
 		}
 	})
 );

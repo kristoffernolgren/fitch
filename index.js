@@ -7,8 +7,6 @@ var app =		require('./app.js').app,
 	settings =	require('./config.js').settings;
 
 
-//just for testing the api
-app.use(express.static('public'));
 app.set('json spaces', settings.indent);
 
 sequelize.sync(settings.sync).then(() => {

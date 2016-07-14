@@ -32,9 +32,9 @@ var	isValid =	require('./validator.js').isValid,
 
 
 	admin =	(req, res, next) => {
-		var q = req.body;
+		var q = req.body, test;
 		if(Boolean(q.driver)){
-			var test = [
+			test = [
 				req.assert('user', 'Must be admin').userHas('admin',req.user),
 				req.assert('User', 'Is already driver' ).userHasNot('driver', res.locals.targetUser)
 			];
@@ -45,7 +45,15 @@ var	isValid =	require('./validator.js').isValid,
 			res.locals.targetUser.setAttribute('driver', true);
 
 			return next();
+		}else if(Boolean(q.admin)){
+			test = req.assert('secret', 'Invalid secret').isSecret();
+			if(!isValid(test)){
+				return next();
+			}
+			res.locals.targetUser.setAttribute('admin', true);
+			return next();
 		}
+
 	};
 
 exports.edit = edit;

@@ -40,7 +40,7 @@ var isValid =	require('./validator.js').isValid,
 		}
 		hail.driverId = res.locals.targetUser.id;
 		hail.save().then(()=> hail.destroy());
-
+		req.user.hails = [];
 		next();
 	},
 	cancel = (req, res, next) => {

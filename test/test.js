@@ -41,21 +41,21 @@ describe('Facebook', () => {
 });
 
 
-describe('Read rider', () => {
+describe('Read driver', () => {
 	it('Should authenticate', (done) =>{
 
-	post(rider, 'http://localhost:3000/user/me')
+	post(driver, 'http://localhost:3000/user/me')
 		.then((body) => {
-			rider.id = body.user.id;
-			rider.name = body.user.name;
+			driver.id = body.user.id;
+			driver.name = body.user.name;
 			done();
 		});
 	});
 	it('Should have a name', ()=> {
-		assert(Boolean(rider.name));
+		assert(Boolean(driver.name));
 	});
 	it('Should have an ID', ()=> {
-		assert(Boolean(rider.id));
+		assert(Boolean(driver.id));
 	});
 
 });
@@ -112,6 +112,16 @@ describe('Invalid', () => {
 		});
 
 	});
+	it('Should allow not allow rider to search', (done) => {
+		post(rider, 'http://localhost:3000/hail/search/')
+		.then((resp)=> {
+			assert(false);
+			done();
+		}).catch((err) => {
+			assert.equal(1, err.error.errors.length);
+			done();
+		});
+	});
 });
 
 describe('Creating Hail', () => {
@@ -154,8 +164,25 @@ describe('Creating Hail', () => {
 				done();
 			});
 	});
+	it('Should create another hail', (done)=> {
+		post(rider, 'http://localhost:3000/hail/create', {lat: 1.5, lon: 1.5})
+			.then((body)=> {
+				assert(Boolean(body.hail));
+				done();
+			});
+	});
+	it('Should fail to complete this hail, because driver is not driver', (done) => {
+		post(rider, 'http://localhost:3000/hail/complete', {
+			id: driver.id
+		}).then(()=>{
+			assert('false');
+			done();
+		}).catch((err)=>{
+			assert.equal(1, err.error.errors.length);
+			done();
+		});
+	});
 });
-
 
 describe('Become Driver', () => {
 	it('Should create request for becomming a driver', (done) => {
@@ -171,4 +198,37 @@ describe('Become Driver', () => {
 				done();
 			});
 		});
+	it('Should make driver admin', (done) => {
+		post(driver, 'http://localhost:3000/user/'+driver.id+'/',{
+			admin: true,
+			secret: 'catballs'
+		})
+		.then((resp) => {
+			done();
+		});
+	});
+	it('Should make driver driver', (done) => {
+		post(driver, 'http://localhost:3000/user/'+driver.id+'/',{
+			driver: true
+		}).then((resp)=> {
+			done();
+		});
+	});
+	it('Should allow driver to search', (done) => {
+		post(driver, 'http://localhost:3000/hail/search/').then((resp)=> {
+			assert(resp.result.length > 0);
+			done();
+		});
+	});
+});
+
+describe('Complete hail', () => {
+	it('Should complete the hail', (done) => {
+		post(rider, 'http://localhost:3000/hail/complete/', {
+			id: driver.id
+		}).then((resp) => {
+			assert(!Boolean(resp.hail));
+			done();
+		});
+	});
 });

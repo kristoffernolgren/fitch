@@ -1,4 +1,5 @@
 var isValid =	require('./validator.js').isValid,
+	render =	require('../routes/output.js').render,
 	targetUser = (req, res, next) => {
 		//sometimes it's a param
 		if(Boolean(req.params.id)){
@@ -13,7 +14,7 @@ var isValid =	require('./validator.js').isValid,
 			return render(req, res);
 		}
 
-		return User.getById(req.query.id)
+		return User.getById(req.body.id)
 			.then((user)=>{
 				test = req.assert('id', 'User does not exist').isDefined(user);
 				if(isValid(test)){
