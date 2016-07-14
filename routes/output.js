@@ -7,7 +7,11 @@ var sequelize = require('../database.js').sequelize,
 			};
 			if(Boolean( req.user.userAttributes )){
 				req.user.userAttributes.forEach((attr) => {
-					output.user[attr.name] = attr.value;
+					if(attr.name === 'stripeId'){
+						output.user.creditcard = true;
+					}else{
+						output.user[attr.name] = attr.value;
+					}
 				});
 			}
 			if(req.user.hails.length > 0){

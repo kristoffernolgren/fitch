@@ -18,5 +18,8 @@
     "sequelize": "^3.23.3",
     "sqlite3": "^3.1.4",
     "stripe": "^4.7.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.5.3"
   }
 }

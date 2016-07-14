@@ -2,15 +2,15 @@ var isValid =	require('./validator.js').isValid,
 	sequelize = require('../database.js').sequelize,
 	hail =		sequelize.models.hail,
 	create = (req, res, next) => {
-		var q = req.query,
+		var q = req.body,
 			latlong = {lat: q.lat, lon: q.lon},
 			test = [
-				req.checkQuery('lat', 'required').notEmpty(),
-				req.checkQuery('lon', 'required').notEmpty(),
+				req.assert('lat', 'required').notEmpty(),
+				req.assert('lon', 'required').notEmpty(),
 				req.assert('user phone','required for making a hail').userHas('phone', req.user),
 				req.assert('user creditCard','required for making a hail').userHas('stripeId', req.user),
-				req.checkQuery('lat', 'invalid location').inside(latlong),
-				req.checkQuery('lon', 'invalid location').inside(latlong)
+				req.assert('lat', 'invalid location').inside(latlong),
+				req.assert('lon', 'invalid location').inside(latlong)
 			];
 
 		if(isValid(test)){
@@ -49,6 +49,7 @@ var isValid =	require('./validator.js').isValid,
 			return next();
 		}
 		req.user.hails[0].destroy();
+		req.user.hails = [];
 		next();
 	};
 
