@@ -20,6 +20,7 @@
     "stripe": "^4.7.0"
   },
   "devDependencies": {
-    "mocha": "^2.5.3"
+    "mocha": "^2.5.3",
+    "request-promise": "^3.0.0"
   }
 }
