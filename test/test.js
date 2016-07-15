@@ -114,7 +114,7 @@ describe('Invalid', () => {
 
 	});
 	it('Should allow not allow rider to search', (done) => {
-		req(rider, 'http://localhost:3000/hail/search/')
+		req(rider, 'http://localhost:3000/hail/', {}, 'GET')
 		.then((resp)=> {
 			assert(false);
 			done();
@@ -126,7 +126,7 @@ describe('Invalid', () => {
 });
 
 describe('Creating Hail', () => {
-	it('Should add credit Card and phoneNumber', (done) => {
+	it('Should add Credit Card and phoneNumber', (done) => {
 		req(rider, 'http://localhost:3000/user/me', {
 			exp_month: "02",
 			exp_year: "22",
@@ -134,10 +134,10 @@ describe('Creating Hail', () => {
 			cvc: "123",
 			phone: "123"
 		}).then((resp)=> {
-				assert(resp.user.creditcard);
-				assert(Boolean(resp.user.phone));
-				done();
-			});
+			assert(resp.user.creditcard);
+			assert(Boolean(resp.user.phone));
+			done();
+		});
 	});
 	it('Should fail when ouside permitted area and missing lon.', (done) => {
 		req(rider,'http://localhost:3000/hail/create', {lat: -500} )
@@ -216,7 +216,7 @@ describe('Become Driver', () => {
 		});
 	});
 	it('Should allow driver to search', (done) => {
-		req(driver, 'http://localhost:3000/hail/search/').then((resp)=> {
+		req(driver, 'http://localhost:3000/hail/', {}, "GET").then((resp)=> {
 			assert(resp.result.length > 0);
 			done();
 		});
