@@ -27,10 +27,10 @@
   },
   "config": {
     "pre-git": {
-      "commit-msg": "simple",
-      "pre-commit": [],
+      "commit-msg": "",
+      "pre-commit": ["mocha"],
       "pre-push": [],
-      "post-commit": ["mocha"],
+      "post-commit": [],
       "post-checkout": [],
       "post-merge": []
     }
