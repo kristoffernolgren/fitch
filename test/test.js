@@ -23,24 +23,24 @@ var fb =		require('../config.js').settings.facebookCredentials,
 	};
 
 describe('Facebook', () => {
-	describe('Get facebook auth keys', () => {
-		it('Should access facebook', function(done) {
-			this.timeout(20000);
-			var uri = 'https://graph.facebook.com/v2.6/1109550759112324/accounts/test-users';
-			Promise.all([
-				req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret}),
-				req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret})
-			]).then((resp) => {
-				rider.access_token = resp[0].access_token;
-				driver.access_token = resp[1].access_token;
-				done();
-			});
+	it('Should access facebook', function(done) {
+		this.timeout(20000);
+		var uri = 'https://graph.facebook.com/v2.6/1109550759112324/accounts/test-users';
+		Promise.all([
+			req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret}),
+			req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret})
+		]).then((resp) => {
+			rider.access_token = resp[0].access_token;
+			rider.fbid = resp[0].id;
+			driver.access_token = resp[1].access_token;
+			driver.fbid = resp[1].id;
+			done();
 		});
+	});
 
-		it('Should return access_tokens', () => {
-			assert(Boolean(rider.access_token));
-			assert(Boolean(driver.access_token));
-		});
+	it('Should return access_tokens', () => {
+		assert(Boolean(rider.access_token));
+		assert(Boolean(driver.access_token));
 	});
 });
 
@@ -231,6 +231,19 @@ describe('Complete hail', () => {
 			id: driver.id
 		}).then((resp) => {
 			assert(!Boolean(resp.hail));
+			done();
+		});
+	});
+});
+
+describe('Cleanup', ()=> {
+	it('Should delete both facebook users', function(done){
+		this.timeout(20000);
+		var uri = 'https://graph.facebook.com/v2.6/';
+		Promise.all([
+			req(rider,  uri+rider.fbid, {access_token: rider.access_token}, 'DELETE'),
+			req(driver, uri+driver.fbid, {access_token: driver.access_token}, 'DELETE'),
+		]).then((resp) => {
 			done();
 		});
 	});
