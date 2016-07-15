@@ -28,11 +28,7 @@
   "config": {
     "pre-git": {
       "commit-msg": "",
-      "pre-commit": ["mocha"],
-      "pre-push": [],
-      "post-commit": [],
-      "post-checkout": [],
-      "post-merge": []
+      "pre-commit": ["mocha"]
     }
   }
 }
