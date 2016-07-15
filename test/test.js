@@ -9,9 +9,6 @@ var fb =		require('../config.js').settings.facebookCredentials,
 		}
 		options = {
 			method: method,
-			body: {
-				some: 'payload'
-			},
 			headers: {
 				access_token: user.access_token
 			},
@@ -243,8 +240,7 @@ describe('Cleanup', ()=> {
 		Promise.all([
 			req(rider,  uri+rider.fbid, {access_token: rider.access_token}, 'DELETE'),
 			req(driver, uri+driver.fbid, {access_token: driver.access_token}, 'DELETE'),
-		]).then((resp) => {
-			done();
-		});
+		])
+		done();
 	});
 });
