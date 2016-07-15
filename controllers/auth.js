@@ -6,7 +6,7 @@ var app =		require('../app.js').app,
 	render =	require('../routes/output.js').render,
 	isValid =	require('./validator.js').isValid,
 	auth =	(req,res,next) => {
-		var test = req.checkBody('access_token', 'required').notEmpty();
+		var test = req.checkHeaders('access_token', 'required').notEmpty();
 		if (!isValid(test)) {
 			return render(req, res);
 		}
