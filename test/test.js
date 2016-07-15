@@ -4,6 +4,9 @@ var fb =		require('../config.js').settings.facebookCredentials,
 	rider = {},
 	driver = {},
 	req = (user, uri, form, method = 'POST') => {
+		if(uri.substring(0,8) !== 'https://' && uri.substring(0,7) !== 'http://' ){
+			uri = 'http://localhost:3000'+uri;
+		}
 		options = {
 			method: method,
 			body: {
@@ -22,7 +25,7 @@ var fb =		require('../config.js').settings.facebookCredentials,
 describe('Facebook', () => {
 	describe('Get facebook auth keys', () => {
 		it('Should access facebook', function(done) {
-			this.timeout(10000);
+			this.timeout(20000);
 			var uri = 'https://graph.facebook.com/v2.6/1109550759112324/accounts/test-users';
 			Promise.all([
 				req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret}),
@@ -44,8 +47,7 @@ describe('Facebook', () => {
 
 describe('Read driver', () => {
 	it('Should authenticate', (done) =>{
-
-	req(driver, 'http://localhost:3000/user/me', {}, 'GET')
+	req(driver, '/user/me', {}, 'GET')
 		.then((body) => {
 			driver.id = body.user.id;
 			driver.name = body.user.name;
@@ -63,7 +65,7 @@ describe('Read driver', () => {
 
 describe('Edit rider', () => {
 	it('Should update name', (done) => {
-		req(rider, 'http://localhost:3000/user/me', {name: 'newName'})
+		req(rider, '/user/me', {name: 'newName'})
 			.then((body) => {
 				assert.equal('newName', body.user.name);
 				done();
@@ -74,7 +76,7 @@ describe('Edit rider', () => {
 describe('Invalid', () => {
 	describe('user updates', () => {
 		it('Should fail creating a hail when missing phone', (done) => {
-			req(rider,'http://localhost:3000/hail/create', {lat: 1.5, lon: 1.5})
+			req(rider,'/hail/create', {lat: 1.5, lon: 1.5})
 				.then(() => {
 					assert(false);
 					done();
@@ -85,7 +87,7 @@ describe('Invalid', () => {
 				});
 		});
 		it('Should fail becoming a driver when missing parameters', (done) => {
-			req(driver, 'http://localhost:3000/user/me', {driverrequest: true})
+			req(driver, '/user/me', {driverrequest: true})
 				.then(() => {
 					assert(false);
 					done();
@@ -98,7 +100,7 @@ describe('Invalid', () => {
 	});
 	describe('Cards', ()=>{
 		it('should fail to add invalid card', (done) => {
-				req(rider, 'http://localhost:3000/user/me', {
+				req(rider, '/user/me', {
 				exp_month: "02",
 				exp_year: "22",
 				number: "4242424242424241",
@@ -114,7 +116,7 @@ describe('Invalid', () => {
 
 	});
 	it('Should allow not allow rider to search', (done) => {
-		req(rider, 'http://localhost:3000/hail/', {}, 'GET')
+		req(rider, '/hail/', {}, 'GET')
 		.then((resp)=> {
 			assert(false);
 			done();
@@ -127,7 +129,7 @@ describe('Invalid', () => {
 
 describe('Creating Hail', () => {
 	it('Should add Credit Card and phoneNumber', (done) => {
-		req(rider, 'http://localhost:3000/user/me', {
+		req(rider, '/user/me', {
 			exp_month: "02",
 			exp_year: "22",
 			number: "4000007520000008",
@@ -140,7 +142,7 @@ describe('Creating Hail', () => {
 		});
 	});
 	it('Should fail when ouside permitted area and missing lon.', (done) => {
-		req(rider,'http://localhost:3000/hail/create', {lat: -500} )
+		req(rider,'/hail/create', {lat: -500} )
 			.then(()=>{
 				assert(false);
 				done();
@@ -152,28 +154,28 @@ describe('Creating Hail', () => {
 
 	});
 	it('Should create a hail', (done)=> {
-		req(rider, 'http://localhost:3000/hail/create', {lat: 1.5, lon: 1.5})
+		req(rider, '/hail/create', {lat: 1.5, lon: 1.5})
 			.then((body)=> {
 				assert(Boolean(body.hail));
 				done();
 			});
 	});
 	it('Sholud cancel a hail', (done)=> {
-		req(rider, 'http://localhost:3000/hail/cancel')
+		req(rider, '/hail/cancel')
 			.then((body)=> {
 				assert(!Boolean(body.hail));
 				done();
 			});
 	});
 	it('Should create another hail', (done)=> {
-		req(rider, 'http://localhost:3000/hail/create', {lat: 1.5, lon: 1.5})
+		req(rider, '/hail/create', {lat: 1.5, lon: 1.5})
 			.then((body)=> {
 				assert(Boolean(body.hail));
 				done();
 			});
 	});
 	it('Should fail to complete this hail, because driver is not driver', (done) => {
-		req(rider, 'http://localhost:3000/hail/complete', {
+		req(rider, '/hail/complete', {
 			id: driver.id
 		}).then(()=>{
 			assert('false');
@@ -187,7 +189,7 @@ describe('Creating Hail', () => {
 
 describe('Become Driver', () => {
 	it('Should create request for becomming a driver', (done) => {
-		req(driver, 'http://localhost:3000/user/me',
+		req(driver, '/user/me',
 			{
 				driverrequest: 'true',
 				bank:'asdf',
@@ -200,7 +202,7 @@ describe('Become Driver', () => {
 			});
 		});
 	it('Should make driver admin', (done) => {
-		req(driver, 'http://localhost:3000/user/'+driver.id+'/',{
+		req(driver, '/user/'+driver.id+'/',{
 			admin: true,
 			secret: 'catballs'
 		})
@@ -209,14 +211,14 @@ describe('Become Driver', () => {
 		});
 	});
 	it('Should make driver driver', (done) => {
-		req(driver, 'http://localhost:3000/user/'+driver.id+'/',{
+		req(driver, '/user/'+driver.id+'/',{
 			driver: true
 		}).then((resp)=> {
 			done();
 		});
 	});
 	it('Should allow driver to search', (done) => {
-		req(driver, 'http://localhost:3000/hail/', {}, "GET").then((resp)=> {
+		req(driver, '/hail/', {}, "GET").then((resp)=> {
 			assert(resp.result.length > 0);
 			done();
 		});
@@ -225,7 +227,7 @@ describe('Become Driver', () => {
 
 describe('Complete hail', () => {
 	it('Should complete the hail', (done) => {
-		req(rider, 'http://localhost:3000/hail/complete/', {
+		req(rider, '/hail/complete/', {
 			id: driver.id
 		}).then((resp) => {
 			assert(!Boolean(resp.hail));
