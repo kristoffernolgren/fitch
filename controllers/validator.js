@@ -5,17 +5,12 @@ var bodyParser =	require('body-parser'),
 	secret =		require('../config.js').settings.secret,
 	//lat, long
 	polygon = [ [ 1, 1 ], [ 1, 2 ], [ 2, 2 ], [ 2, 1 ] ],
-	isValid = (tests) => {
-		var errors = [];
-		if(!Array.isArray(tests)){
-			tests = [tests];
+	validate = (req, res, next) => {
+		if(req.validationErrors().length > 0){
+			return next(new Error());
+		}else{
+			next();
 		}
-		//flatten
-		newTests = [].concat.apply([], tests);
-		tests.forEach((test)=> {
-			errors = errors.concat(test.validationErrors);
-		});
-		return errors.length === 0;
 	};
 
 
@@ -34,4 +29,4 @@ app.use(
 	})
 );
 
-exports.isValid = isValid;
+exports.validate = validate;

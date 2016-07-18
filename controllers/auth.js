@@ -4,17 +4,17 @@ var app =		require('../app.js').app,
 	facebook =	require('passport-facebook-token'),
 	User =		require('../database.js').sequelize.models.user,
 	render =	require('../routes/output.js').render,
-	isValid =	require('./validator.js').isValid,
-	auth =	(req,res,next) => {
-		var test = req.checkHeaders('access_token', 'required').notEmpty();
-		if (!isValid(test)) {
-			return render(req, res);
-		}
+	validate =	require('./validator.js').validate,
+	authTests =	(req, res, next) => {
+		req.checkHeaders('access_token', 'required').notEmpty();
+		next();
+	},
+	getUser =	(req,res,next) => {
 		passport.authenticate('facebook-token', (err, user, info) => {
 			//Error if invalid accestoken
 			if(Boolean(err)){
-				req.assert('access_token', err.message).isDefined(user);
-				return render(req, res);
+				req.assert('access_token', err.message).fail();
+				return next(new Error());
 			}else{
 				//Login and create user
 				return User.auth(user.id, user.displayName)
@@ -24,7 +24,6 @@ var app =		require('../app.js').app,
 			}
 		})(req, res, next);
 	};
-
 app.use(passport.initialize());
 
 
@@ -39,4 +38,4 @@ passport.use(new facebook(settings,
 	}
 ));
 
-exports.auth = auth;
+exports.auth = [authTests, validate, getUser];

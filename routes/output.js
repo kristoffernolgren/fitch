@@ -1,6 +1,10 @@
 var sequelize = require('../database.js').sequelize,
+	error = (err, req, res, next) => {
+	res.status(400);
+	render(req, res, next);
+},
 	render = (req, res) => {
-		var output = {}, hail, code = 200;
+		var output = {}, hail;
 		if(req.user){
 			output.user = {
 				id: req.user.getId()
@@ -34,11 +38,11 @@ var sequelize = require('../database.js').sequelize,
 			output.params = req.query;
 		}
 		if(req.validationErrors().length > 0 ){
-			code = 400;
 			output.errors = req.validationErrors();
 		}
 
-		res.status(code).json(output);
+		res.json(output);
 	};
 
 exports.render = render;
+exports.error = error;

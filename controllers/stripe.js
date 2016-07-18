@@ -1,8 +1,19 @@
 var key =		require('../config.js').settings.stripe,
 	stripe =	require('stripe')(key),
-	isValid =	require('./validator.js').isValid,
+	validate =	require('./validator.js').validate,
 	render =	require('../routes/output.js').render,
+	makeTests = (req, res, next) => {
+
+		if(Boolean(req.body.number)){
+			req.assert('exp_month', 'required for regestering a card').notEmpty();
+			req.assert('exp_year',	'required for regestering a card').notEmpty();
+			req.assert('cvc',		'required for regestering a card').notEmpty();
+			req.assert('number',		'required for regestering a card').notEmpty();
+		}
+		next();
+	},
 	make = (req, res, next) => {
+
 		var q =	req.body,
 			createObj = {
 				description: req.user.id + ' ' + req.user.getAttribute('name').dataValues.value,
@@ -15,14 +26,6 @@ var key =		require('../config.js').settings.stripe,
 				}
 			};
 		if(Boolean(q.number)){
-			test = [
-				req.assert('exp_month', 'required for regestering a card').notEmpty(),
-				req.assert('exp_year',	'required for regestering a card').notEmpty(),
-				req.assert('cvc',		'required for regestering a card').notEmpty()
-			];
-			if(!isValid(test)){
-				next();
-			}
 			stripe.customers.create(createObj)
 				.then((customer)=> {
 					req.user.setAttribute('stripeId', customer.id);
@@ -30,7 +33,7 @@ var key =		require('../config.js').settings.stripe,
 				})
 				.catch((err)=> {
 					req.assert(err.raw.param, err.raw.message).fail();
-					render(req, res);
+					next(new Error());
 				});
 		}else{
 			next();
@@ -45,5 +48,5 @@ var key =		require('../config.js').settings.stripe,
 		next();
 	};
 
-exports.make = make;
+exports.make = [makeTests, validate, make];
 exports.charge = charge;
