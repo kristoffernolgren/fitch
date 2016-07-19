@@ -91,7 +91,8 @@ describe('Invalid', () => {
 		});
 	});
 	describe('Cards', ()=>{
-		it('should fail to add invalid card', () => {
+		it('should fail to add invalid card', function(){
+			this.timeout(20000);
 			return req(rider, '/user/me', {
 				exp_month: "02",
 				exp_year: "22",
@@ -105,13 +106,24 @@ describe('Invalid', () => {
 		});
 
 	});
-	it('Should allow not allow rider to search', () => {
+	it('Should not allow non-rider to search', () => {
 		return req(rider, '/hail/', {}, 'GET')
 			.then((resp)=> {
 				assert(false);
 			}, err => {
 				assert.equal(1, err.error.errors.length);
 			});
+	});
+	it('Should fail at creating an admin with an invalid userID', ()=> {
+		return req(driver, '/user/x/',{
+			admin: true,
+			secret: 'catballs'
+		}).then(()=>{
+			assert(false);
+		}, err => {
+			assert.equal(1, err.error.errors.length);
+		});
+
 	});
 });
 
@@ -175,6 +187,15 @@ describe('Become Driver', () => {
 		return req(driver, '/user/'+driver.id+'/',{
 			admin: true,
 			secret: 'catballs'
+		});
+	});
+	it('Should fail to make driver with invalid ID', () => {
+		return req(driver, '/user/a/',{
+			driver: true
+		}).then((body)=>{
+			assert(false);
+		}, err => {
+			assert.equal(1, err.error.errors.length);
 		});
 	});
 	it('Should make driver', () => {
