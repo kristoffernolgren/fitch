@@ -24,7 +24,7 @@ var validate =	require('./validator.js').validate,
 	},
 	search = (req, res, next) => {
 		hail.search().then((hails)=>{
-			res.locals.result = hails;
+			res.locals.data = hails;
 			next();
 		});
 	},

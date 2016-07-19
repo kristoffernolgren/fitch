@@ -26,11 +26,11 @@ describe('Facebook', () => {
 		return Promise.all([
 			req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret}),
 			req(rider, uri, {installed: true, access_token: fb.clientID+'|'+fb.clientSecret})
-		]).then((resp) => {
-			rider.access_token = resp[0].access_token;
-			rider.fbid = resp[0].id;
-			driver.access_token = resp[1].access_token;
-			driver.fbid = resp[1].id;
+		]).then((body) => {
+			rider.access_token = body[0].access_token;
+			rider.fbid = body[0].id;
+			driver.access_token = body[1].access_token;
+			driver.fbid = body[1].id;
 		});
 	});
 
@@ -45,8 +45,8 @@ describe('Read driver', () => {
 	it('Should authenticate', () =>{
 	return req(driver, '/user/me', {}, 'GET')
 		.then((body) => {
-			driver.id = body.user.id;
-			driver.name = body.user.name;
+			driver.id = body.meta.user.id;
+			driver.name = body.meta.user.name;
 		});
 	});
 	it('Should have a name', ()=> assert(Boolean(driver.name)));
@@ -57,7 +57,7 @@ describe('Read driver', () => {
 describe('Edit rider', () => {
 	it('Should update name', () => {
 		return req(rider, '/user/me', {name: 'newName'})
-			.then((body) => assert.equal('newName', body.user.name));
+			.then((body) => assert.equal('newName', body.meta.user.name));
 	});
 });
 
@@ -68,7 +68,8 @@ describe('Invalid', () => {
 				.then(() => {
 					assert(false);
 				}, err => {
-					assert.equal(1, err.error.errors.length);
+					console.log(err.error);
+					assert.equal(1, err.error.meta.errors.length);
 				});
 		});
 	});
@@ -78,7 +79,7 @@ describe('Invalid', () => {
 				.then(() => {
 					assert(false);
 				}, err => {
-					assert.equal(2, err.error.errors.length);
+					assert.equal(2, err.error.meta.errors.length);
 				});
 		});
 		it('Should fail becoming a driver when missing parameters', () => {
@@ -86,7 +87,7 @@ describe('Invalid', () => {
 				.then(() => {
 					assert(false);
 				}, err => {
-					assert.equal(3,err.error.errors.length);
+					assert.equal(3,err.error.meta.errors.length);
 				});
 		});
 	});
@@ -101,17 +102,17 @@ describe('Invalid', () => {
 			}).then((body) => {
 				assert(false);
 			}, err => {
-				assert(err.error.errors[0].msg === 'Your card number is incorrect.');
+				assert(err.error.meta.errors[0].msg === 'Your card number is incorrect.');
 			});
 		});
 
 	});
 	it('Should not allow non-rider to search', () => {
 		return req(rider, '/hail/', {}, 'GET')
-			.then((resp)=> {
+			.then((body)=> {
 				assert(false);
 			}, err => {
-				assert.equal(1, err.error.errors.length);
+				assert.equal(1, err.error.meta.errors.length);
 			});
 	});
 	it('Should fail at creating an admin with an invalid userID', ()=> {
@@ -121,7 +122,7 @@ describe('Invalid', () => {
 		}).then(()=>{
 			assert(false);
 		}, err => {
-			assert.equal(1, err.error.errors.length);
+			assert.equal(1, err.error.meta.errors.length);
 		});
 
 	});
@@ -135,9 +136,9 @@ describe('Creating Hail', () => {
 			number: "4000007520000008",
 			cvc: "123",
 			phone: "123"
-		}).then((resp)=> {
-			assert(resp.user.creditcard);
-			assert(Boolean(resp.user.phone));
+		}).then((body)=> {
+			assert(body.meta.user.creditcard);
+			assert(Boolean(body.meta.user.phone));
 		});
 	});
 	it('Should fail when ouside permitted area and missing lon.', () => {
@@ -145,21 +146,21 @@ describe('Creating Hail', () => {
 			.then(()=>{
 				assert(false);
 			}, err => {
-				assert.equal(3, err.error.errors.length);
+				assert.equal(3, err.error.meta.errors.length);
 			});
 
 	});
 	it('Should create a hail', ()=> {
 		return req(rider, '/hail/create', {lat: 1.5, lon: 1.5})
-			.then((body) => assert(Boolean(body.hail)));
+			.then((body) => assert(Boolean(body.meta.user.hail)));
 	});
 	it('Sholud cancel a hail', ()=> {
 		return req(rider, '/hail/cancel')
-			.then((body) => assert(!Boolean(body.hail)));
+			.then((body) => assert(!Boolean(body.meta.user.hail)));
 	});
 	it('Should create another hail', ()=> {
 		return req(rider, '/hail/create', {lat: 1.5, lon: 1.5})
-			.then((body) => assert(Boolean(body.hail)));
+			.then((body) => assert(Boolean(body.meta.user.hail)));
 	});
 	it('Should fail to complete this hail, because driver is not driver', () => {
 		return req(rider, '/hail/complete', {
@@ -167,7 +168,7 @@ describe('Creating Hail', () => {
 		}).then(() => {
 			assert(false);
 			}, err => {
-				assert.equal(1, err.error.errors.length);
+				assert.equal(1, err.error.meta.errors.length);
 			});
 	});
 });
@@ -181,7 +182,7 @@ describe('Become Driver', () => {
 				bankNo: '123',
 				phone: '123'
 			})
-			.then((resp) => assert.equal('true', resp.user.driverRequest));
+			.then((body) => assert.equal('true', body.meta.user.driverRequest));
 		});
 	it('Should make driver admin', () => {
 		return req(driver, '/user/'+driver.id+'/',{
@@ -195,7 +196,7 @@ describe('Become Driver', () => {
 		}).then((body)=>{
 			assert(false);
 		}, err => {
-			assert.equal(1, err.error.errors.length);
+			assert.equal(1, err.error.meta.errors.length);
 		});
 	});
 	it('Should make driver', () => {
@@ -205,7 +206,7 @@ describe('Become Driver', () => {
 	});
 	it('Should allow driver to search', () => {
 		return req(driver, '/hail/', {}, "GET")
-			.then((resp)=> assert(Boolean(resp.result)));
+			.then((body)=> assert(Boolean(body.data)));
 	});
 });
 
@@ -213,7 +214,7 @@ describe('Complete hail', () => {
 	it('Should complete the hail', () => {
 		return req(rider, '/hail/complete/', {
 			id: driver.id
-		}).then((resp) => assert(!Boolean(resp.hail)));
+		}).then((body) => assert(!Boolean(body.meta.user.hail)));
 	});
 });
 

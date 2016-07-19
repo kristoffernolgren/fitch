@@ -8,23 +8,25 @@ var sequelize = require('../database.js').sequelize,
 	},
 	render = (req, res) => {
 		var output = {}, hail;
+		//if user
 		if(req.user){
-			output.user = {
-				id: req.user.getId()
+			output.meta = {
+				user: {
+					id: req.user.getId()
+				}
 			};
 			if(Boolean( req.user.userAttributes )){
 				req.user.userAttributes.forEach((attr) => {
 					if(attr.name === 'stripeId'){
-						output.user.creditcard = true;
+						output.meta.user.creditcard = true;
 					}else{
-						output.user[attr.name] = attr.value;
+						output.meta.user[attr.name] = attr.value;
 					}
 				});
 			}
 			if(req.user.hails.length > 0){
-
 				hail = req.user.hails[0];
-				output.hail = {
+				output.meta.user.hail = {
 					lon: hail.lon,
 					lat: hail.lat,
 					created: hail.createdAt
@@ -32,18 +34,30 @@ var sequelize = require('../database.js').sequelize,
 			}
 
 		}
-
-		if(Boolean(res.locals.result)){
-			output.result = res.locals.result;
-		}
-
 		if(Object.keys(req.query).length){
-			output.params = req.query;
+			if(!Boolean(output.meta)){
+				output.meta = {};
+			}
+			output.meta.query = req.query;
 		}
-		if(req.validationErrors().length > 0 ){
-			output.errors = req.validationErrors();
+		if(Object.keys(req.body).length){
+			if(!Boolean(output.meta)){
+				output.meta = {};
+			}
+			output.meta.body = req.body;
 		}
 
+		if(req.validationErrors().length > 0 ){
+			if(!Boolean(output.meta)){
+				output.meta = {};
+			}
+			output.meta.errors = req.validationErrors();
+		}
+
+
+		if(Boolean(res.locals.data)){
+			output.data = res.locals.data;
+		}
 		res.json(output);
 	};
 

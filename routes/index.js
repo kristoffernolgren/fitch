@@ -10,4 +10,3 @@ app.get('/hail/',			c.auth,	c.hail.search,		render);
 app.post('/hail/create',	c.auth,	c.hail.create,		render);
 app.post('/hail/complete',	c.auth,	c.hail.complete,	c.striper.charge, render);
 app.post('/hail/cancel',	c.auth,	c.hail.cancel,		render);
-
