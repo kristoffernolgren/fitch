@@ -184,7 +184,7 @@ describe('Become Driver', () => {
 	});
 	it('Should allow driver to search', () => {
 		return req(driver, '/hail/', {}, "GET")
-			.then((resp)=> assert(resp.result.length > 0));
+			.then((resp)=> assert(Boolean(resp.result)));
 	});
 });
 

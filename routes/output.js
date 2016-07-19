@@ -1,10 +1,8 @@
 var sequelize = require('../database.js').sequelize,
 	error = (err, req, res, next) => {
-		console.log(err.message);
 		if(Boolean(err.message)){
 			req._validationErrors.push({msg: err.message});
 		}
-		console.log(req._validationErrors);
 		res.status(400);
 		render(req, res, next);
 	},
