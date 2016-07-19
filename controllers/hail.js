@@ -35,7 +35,6 @@ var validate =	require('./validator.js').validate,
 	},
 	complete = (req,res,next) => {
 		var hail = req.user.hails[0];
-		//Validation!!
 		User.getById(req.body.id)
 			.then((user)=>{
 				if(user.getAttribute('driver')){
@@ -43,12 +42,10 @@ var validate =	require('./validator.js').validate,
 					req.user.hails = [];
 					next();
 				}else{
-					req.assert('id', 'User is not driver').fail();
-					next(new Error());
+					next(new Error('Target user is not driver'));
 				}
 			}).catch((err) => {
-				req.assert('access_token', 'User is not defined').fail();
-				next(new Error());
+				next(new Error('Target user is not defined'));
 			});
 
 	},

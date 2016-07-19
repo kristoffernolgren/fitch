@@ -1,8 +1,13 @@
 var sequelize = require('../database.js').sequelize,
 	error = (err, req, res, next) => {
-	res.status(400);
-	render(req, res, next);
-},
+		console.log(err.message);
+		if(Boolean(err.message)){
+			req._validationErrors.push({msg: err.message});
+		}
+		console.log(req._validationErrors);
+		res.status(400);
+		render(req, res, next);
+	},
 	render = (req, res) => {
 		var output = {}, hail;
 		if(req.user){
@@ -30,7 +35,7 @@ var sequelize = require('../database.js').sequelize,
 
 		}
 
-		if(Boolean(res.locals.result) && res.locals.result.length > 0){
+		if(Boolean(res.locals.result)){
 			output.result = res.locals.result;
 		}
 

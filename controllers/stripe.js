@@ -32,8 +32,7 @@ var key =		require('../config.js').settings.stripe,
 					next();
 				})
 				.catch((err)=> {
-					req.assert(err.raw.param, err.raw.message).fail();
-					next(new Error());
+					next(new Error(err.raw.message));
 				});
 		}else{
 			next();

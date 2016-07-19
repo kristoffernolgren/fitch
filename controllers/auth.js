@@ -13,8 +13,7 @@ var app =		require('../app.js').app,
 		passport.authenticate('facebook-token', (err, user, info) => {
 			//Error if invalid accestoken
 			if(Boolean(err)){
-				req.assert('access_token', err.message).fail();
-				return next(new Error());
+				return next(new Error(err.message));
 			}else{
 				//Login and create user
 				return User.auth(user.id, user.displayName)

@@ -62,6 +62,16 @@ describe('Edit rider', () => {
 });
 
 describe('Invalid', () => {
+	describe('auth', () => {
+		it('Should fail with invalid access_token', () => {
+			return req({access_token: 'asdf'}, '/user/me', {})
+				.then(() => {
+					assert(false);
+				}, err => {
+					assert.equal(1, err.error.errors.length);
+				});
+		});
+	});
 	describe('user updates', () => {
 		it('Should fail creating a hail when missing phone', () => {
 			return req(rider,'/hail/create', {lat: 1.5, lon: 1.5})

@@ -19,7 +19,6 @@ app.use(
 	validator({
 		customValidators: {
 			//return false when validation fails
-			fail: (value) => false,
 			isDefined: (value, test) => Boolean(test),
 			userHas: (value, attr, user) => user.getAttribute(attr),
 			userHasNot: (value, attr, user) => !user.getAttribute(attr),

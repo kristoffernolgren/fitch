@@ -52,8 +52,7 @@ var	validate =	require('./validator.js').validate,
 					user.setAttribute('driver', true);
 					next();
 				}).catch((err) => {
-					req.assert('access_token', 'User is not defined').fail();
-					next(new Error());
+					next(new Error('User does not exist'));
 				});
 		}else{
 			next();
@@ -77,8 +76,7 @@ var	validate =	require('./validator.js').validate,
 					user.setAttribute('admin', true);
 					next();
 				}).catch((err) => {
-					req.assert('access_token', 'User is not defined').fail();
-					next(new Error());
+					next(new Error('User does not exist'));
 				});
 
 		}else{
