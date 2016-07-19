@@ -86,6 +86,7 @@ User = sequelize.define('user', {
 				where: {
 					id: id,
 				},
+				rejectOnEmpty: new Error('No such user'),
 				include: {
 					model: sequelize.models.userAttributes,
 					required: false

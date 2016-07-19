@@ -25,6 +25,12 @@ Hail = sequelize.define('hail', {
 	}
 },{
 	paranoid: true,
+	instanceMethods: {
+		addDriver: function(user){
+			this.driverId = user.id;
+			this.save().then(()=> this.destroy());
+		}
+	},
 	classMethods: {
 		make: (latlong, user) => {
 			if(user.hails.length > 0){

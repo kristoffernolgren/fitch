@@ -1,6 +1,7 @@
 var validate =	require('./validator.js').validate,
 	sequelize = require('../database.js').sequelize,
 	hail =		sequelize.models.hail,
+	User =		sequelize.models.user,
 	createTests = (req, res, next) => {
 		var latlong = {lat: req.body.lat, lon: req.body.lon};
 
@@ -30,16 +31,26 @@ var validate =	require('./validator.js').validate,
 	completeTests = (req, res, next) => {
 		var hail = req.user.hails[0];
 		req.assert('hail','user has no current hail').isDefined(hail);
-		req.assert('user', 'No such driver exists').isDefined(res.locals.targetUser.getAttribute('driver'));
 		next();
 	},
 	complete = (req,res,next) => {
 		var hail = req.user.hails[0];
+		//Validation!!
+		User.getById(req.body.id)
+			.then((user)=>{
+				if(user.getAttribute('driver')){
+					hail.addDriver(user);
+					req.user.hails = [];
+					next();
+				}else{
+					req.assert('id', 'User is not driver').fail();
+					next(new Error());
+				}
+			}).catch((err) => {
+				req.assert('access_token', 'User is not defined').fail();
+				next(new Error());
+			});
 
-		hail.driverId = res.locals.targetUser.id;
-		hail.save().then(()=> hail.destroy());
-		req.user.hails = [];
-		next();
 	},
 	cancelTest = (req, res, next) => {
 		req.assert('hail','user has no current hail').isDefined(req.user.hails.length);

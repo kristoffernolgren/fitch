@@ -1,5 +1,6 @@
 var	validate =	require('./validator.js').validate,
 	attributes = ['name', 'phone', 'bank', 'bankNo'],
+	User =		require('../database.js').sequelize.models.user,
 
 	//update userdetails
 	editTests = (req, res, next) => {
@@ -38,29 +39,51 @@ var	validate =	require('./validator.js').validate,
 	makeDriverTests = (req, res, next) => {
 		if(Boolean(req.body.driver)){
 			req.assert('user', 'Must be admin').userHas('admin',req.user);
-			req.assert('User', 'Is already driver' ).userHasNot('driver', res.locals.targetUser);
+			req.checkParams('id', 'required').notEmpty();
+			req.checkParams('id', 'Must only contain letters').isAlpha();
 		}
 		next();
 	},
 	makeDriver  = (req, res, next) => {
 		if(Boolean(req.body.driver)){
-			res.locals.targetUser.setAttribute('driver', true);
+			User.getById(req.params.id)
+				.then((user)=>{
+
+					user.setAttribute('driver', true);
+					next();
+				}).catch((err) => {
+					req.assert('access_token', 'User is not defined').fail();
+					next(new Error());
+				});
+		}else{
+			next();
 		}
-		next();
 	},
 
 	//Convert user to admin
 	makeAdminTests = (req, res, next) => {
 		if(Boolean(req.body.admin)){
 			req.assert('secret', 'Invalid secret').isSecret();
+			req.checkParams('id', 'required').notEmpty();
+			req.checkParams('id', 'Must only contain letters').isAlpha();
 		}
 		next();
 	},
 	makeAdmin = (req, res, next) => {
 		if(Boolean(req.body.admin)){
-			res.locals.targetUser.setAttribute('admin', true);
+			//Validering också!
+			User.getById(req.params.id)
+				.then((user)=>{
+					user.setAttribute('admin', true);
+					next();
+				}).catch((err) => {
+					req.assert('access_token', 'User is not defined').fail();
+					next(new Error());
+				});
+
+		}else{
+			next();
 		}
-		next();
 	};
 
 exports.edit = [editTests, validate, edit];
