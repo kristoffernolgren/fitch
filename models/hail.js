@@ -49,9 +49,6 @@ Hail = sequelize.define('hail', {
 						$gt: new Date(new Date() - 60 * 60 * 1000)
 					}
 				}
-			})
-			.then((result)=>{
-				return result;
 			});
 		}
 	}
