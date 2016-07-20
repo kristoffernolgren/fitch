@@ -68,7 +68,6 @@ describe('Invalid', () => {
 				.then(() => {
 					assert(false);
 				}, err => {
-					console.log(err.error);
 					assert.equal(1, err.error.meta.errors.length);
 				});
 		});
