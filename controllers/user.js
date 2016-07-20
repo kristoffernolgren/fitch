@@ -13,6 +13,7 @@ var	validate =	require('./validator.js').validate,
 		attributes.forEach((attribute) => {
 			if(Boolean(req.body[attribute] )){
 				req.user.setAttribute(attribute, req.body[attribute]);
+				res.addMessage(attribute + ' updated');
 			}
 		});
 
@@ -31,6 +32,7 @@ var	validate =	require('./validator.js').validate,
 	requestDriver = (req, res, next) =>{
 		if(Boolean(req.body.driverrequest)){
 			req.user.setAttribute('driverRequest', 'true');
+			res.addMessage('User has now requested to become a driver');
 		}
 		next();
 	},
@@ -48,8 +50,10 @@ var	validate =	require('./validator.js').validate,
 		if(Boolean(req.body.driver)){
 			User.getById(req.params.id)
 				.then((user)=>{
-
 					user.setAttribute('driver', true);
+					res.addMessage('User is now a driver');
+					res.locals.result = {driver: user.getId()};
+
 					next();
 				}).catch((err) => {
 					next(new Error('User does not exist'));
@@ -74,6 +78,8 @@ var	validate =	require('./validator.js').validate,
 			User.getById(req.params.id)
 				.then((user)=>{
 					user.setAttribute('admin', true);
+					res.addMessage('User is now an admin');
+					res.locals.result = {admin: user.getId()};
 					next();
 				}).catch((err) => {
 					next(new Error('User does not exist'));

@@ -3,15 +3,16 @@ var app =		require('../app.js').app,
 	render =	require('./output.js').render,
 	error =		require('./output.js').error;
 
-//setup.
+//setup messages
 app.use((req, res, next) => {
 	res.locals.messages = [];
+	res.addMessage = (msg) => res.locals.messages.push(msg);
 	next();
 });
 
 app.get('/user/me',			c.auth, render);
-app.post('/user/me',		c.auth,	c.striper.make,		c.user.edit,		c.user.requestDriver,		render);
-app.post('/user/:id',		c.auth, c.user.makeDriver,	c.user.makeAdmin,			render);
+app.post('/user/me',		c.auth,	c.striper.make,		c.user.edit,		c.user.requestDriver,	render);
+app.post('/user/:id',		c.auth, c.user.makeDriver,	c.user.makeAdmin,	render);
 
 app.get('/hail/',			c.auth,	c.hail.search,		render);
 app.post('/hail/create',	c.auth,	c.hail.create,		render);

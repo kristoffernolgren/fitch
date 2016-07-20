@@ -187,7 +187,7 @@ describe('Become Driver', () => {
 		return req(driver, '/user/'+driver.id+'/',{
 			admin: true,
 			secret: 'catballs'
-		});
+		}).then((body) => assert.equal("User is now an admin", body.data.messages[0]));
 	});
 	it('Should fail to make driver with invalid ID', () => {
 		return req(driver, '/user/a/',{
@@ -201,11 +201,12 @@ describe('Become Driver', () => {
 	it('Should make driver', () => {
 		return req(driver, '/user/'+driver.id+'/',{
 			driver: true
-		});
+		}).then((body) => assert.equal("User is now a driver", body.data.messages[0]));
+
 	});
 	it('Should allow driver to search', () => {
 		return req(driver, '/hail/', {}, "GET")
-			.then((body)=> assert(Boolean(body.data)));
+			.then((body)=> assert(Boolean(body.data.result)));
 	});
 });
 

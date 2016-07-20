@@ -7,7 +7,7 @@ var sequelize = require('../database.js').sequelize,
 		render(req, res, next);
 	},
 	render = (req, res) => {
-		var output = {}, meta = {}, hail;
+		var output = {}, meta = {}, data = {}, hail;
 		//if user
 		if(req.user){
 			meta.user = {
@@ -42,12 +42,18 @@ var sequelize = require('../database.js').sequelize,
 		if(req.validationErrors().length > 0 ){
 			meta.errors = req.validationErrors();
 		}
-
-		if(Boolean(res.locals.data)){
-			output.data = res.locals.data;
+		if(res.locals.messages.length > 0){
+			data.messages = res.locals.messages;
 		}
+		if(Boolean(res.locals.result)){
+			data.result = res.locals.result;
+		}
+
 		if(Object.keys(meta).length > 0){
 			output.meta = meta;
+		}
+		if(Object.keys(data).length > 0){
+			output.data = data;
 		}
 		res.json(output);
 	};

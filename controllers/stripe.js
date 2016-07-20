@@ -13,7 +13,6 @@ var key =		require('../config.js').settings.stripe,
 		next();
 	},
 	make = (req, res, next) => {
-
 		var q =	req.body,
 			createObj = {
 				description: req.user.id + ' ' + req.user.getAttribute('name').dataValues.value,
@@ -29,6 +28,7 @@ var key =		require('../config.js').settings.stripe,
 			stripe.customers.create(createObj)
 				.then((customer)=> {
 					req.user.setAttribute('stripeId', customer.id);
+					res.addMessage('Credit card updated');
 					next();
 				})
 				.catch((err)=> {

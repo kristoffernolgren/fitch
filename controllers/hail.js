@@ -16,6 +16,7 @@ var validate =	require('./validator.js').validate,
 	create = (req, res, next) => {
 		var latlong = {lat: req.body.lat, lon: req.body.lon};
 		hail.make(latlong, req.user);
+		res.addMessage('Hail created');
 		next();
 	},
 	searchTests = (req, res, next) => {
@@ -24,7 +25,9 @@ var validate =	require('./validator.js').validate,
 	},
 	search = (req, res, next) => {
 		hail.search().then((hails)=>{
-			res.locals.data = hails;
+			res.locals.result = hails;
+			res.addMessage( hails.length + ' hail(s) found');
+
 			next();
 		});
 	},
@@ -40,6 +43,8 @@ var validate =	require('./validator.js').validate,
 				if(user.getAttribute('driver')){
 					hail.addDriver(user);
 					req.user.hails = [];
+					res.addMessage('Hail completed');
+					res.locals.result = {driver: user.getId()};
 					next();
 				}else{
 					next(new Error('Target user is not driver'));
@@ -51,6 +56,8 @@ var validate =	require('./validator.js').validate,
 	},
 	cancelTest = (req, res, next) => {
 		req.assert('hail','user has no current hail').isDefined(req.user.hails.length);
+		res.addMessage('Hail canceled');
+
 		next();
 	},
 	cancel = (req, res, next) => {
