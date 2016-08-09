@@ -1,0 +1,19 @@
+{
+	"facebookCredentials": {
+		"clientID": "1109550759112324",
+		"clientSecret": "239aa8dca5ff2052f80bf3bf19d49226"
+	},
+	"database": {
+		"database": "database",
+		"username": "username",
+		"password": "password",
+		"host": "localhost",
+		"dialect": "sqlite",
+		"storage": "db.sqlite",
+		"logging": false
+	},
+	"sync": {"force": false},
+	"indent": 4,
+	"stripe": "sk_test_gTa8SpQ5F6fOLu43i0HpJsQ6",
+	"secret": "catballs"
+}
